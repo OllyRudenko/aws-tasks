@@ -1,4 +1,4 @@
-package com.awstasks.task02;
+package com.task02;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;

@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>task01-group</groupId>
+    <groupId>task01</groupId>
     <artifactId>task01</artifactId>
     <version>1.0.0</version>
 
@@ -41,7 +41,7 @@
                 <version>${deployment-configuration-annotations.version}</version>
                 <configuration>
                     <packages>
-                        <package>com.awstasks/task01</package>
+                        <package>com.awstasks.task01</package>
                     </packages>
                     <fileName>${project.name}-${project.version}.jar</fileName>
                 </configuration>

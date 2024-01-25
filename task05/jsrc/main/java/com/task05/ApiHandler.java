@@ -63,7 +63,7 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
 
         Item item = new Item().withString("id", eventID)
                 .withInt("principalId", event.getPrincipalId())
-                .withString("createdAt", event.getCreatedAt().toString())
+                .withString("createdAt", event.getCreatedAt())
                 .withMap("body", event.getBody());
 
         // get from DB saved object

@@ -1,4 +1,4 @@
-package com.task06;
+package aws.syndicate.task06;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;

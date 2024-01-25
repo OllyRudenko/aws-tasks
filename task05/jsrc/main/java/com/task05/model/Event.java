@@ -6,14 +6,14 @@ import java.util.Objects;
 
 public class Event {
     private String id;
-    private Integer principalId;
+    private int principalId;
     private String createdAt;
     private Map<String, String> body;
 
     public Event() {
     }
 
-    public Event(String id, Integer principalId, String createdAt, Map<String, String> body) {
+    public Event(String id, int principalId, String createdAt, Map<String, String> body) {
         this.id = id;
         this.principalId = principalId;
         this.createdAt = createdAt;
@@ -28,11 +28,11 @@ public class Event {
         this.id = id;
     }
 
-    public Integer getPrincipalId() {
+    public int getPrincipalId() {
         return principalId;
     }
 
-    public void setPrincipalId(Integer principalId) {
+    public void setPrincipalId(int principalId) {
         this.principalId = principalId;
     }
 
@@ -57,7 +57,7 @@ public class Event {
         if (this == o) return true;
         if (!(o instanceof Event)) return false;
         Event event = (Event) o;
-        return getId().equals(event.getId()) && getPrincipalId().equals(event.getPrincipalId())
+        return getId().equals(event.getId()) && getPrincipalId() == event.getPrincipalId()
                 && getCreatedAt().equals(event.getCreatedAt()) && getBody().equals(event.getBody());
     }
 

@@ -74,7 +74,6 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
                 new PrimaryKey("id", eventID));
         Item eventNew = getItemOutcome.getItem();
 
-
         System.out.println("eventNew " + eventNew.toJSON());
 
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent();

@@ -67,7 +67,7 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
                 .putItem(item);
         System.out.println("Outcome !!! " + outcome);
         GetItemOutcome getItemOutcome = table.getItemOutcome(
-                new PrimaryKey("principalId", event.getPrincipalId()));
+                new PrimaryKey("id", eventID));
         Item eventNew = getItemOutcome.getItem();
 
 

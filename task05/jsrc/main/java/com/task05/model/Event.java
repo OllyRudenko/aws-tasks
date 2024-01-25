@@ -7,13 +7,13 @@ import java.util.Objects;
 public class Event {
     private String id;
     private Integer principalId;
-    private LocalDateTime createdAt;
+    private String createdAt;
     private Map<String, String> body;
 
     public Event() {
     }
 
-    public Event(String id, Integer principalId, LocalDateTime createdAt, Map<String, String> body) {
+    public Event(String id, Integer principalId, String createdAt, Map<String, String> body) {
         this.id = id;
         this.principalId = principalId;
         this.createdAt = createdAt;
@@ -36,11 +36,11 @@ public class Event {
         this.principalId = principalId;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public String getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
 

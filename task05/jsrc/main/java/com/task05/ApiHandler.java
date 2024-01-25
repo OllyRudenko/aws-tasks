@@ -26,6 +26,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -94,11 +95,12 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
 
         event.setId(generateUniqueID());
         event.setPrincipalId(Integer.valueOf((reqObject.get("principalId").toString())));
-        event.setCreatedAt(LocalDateTime.now());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        event.setCreatedAt(LocalDateTime.now().format(formatter));
         JSONObject bodyJson;
         try {
             bodyJson = (JSONObject) new JSONParser().parse(reqObject.get("content").toString());
-            System.out.println("bodyJson !!!! " + bodyJson);
+            System.out.println("bodyJson !!!! " + bodyJson.toString());
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }

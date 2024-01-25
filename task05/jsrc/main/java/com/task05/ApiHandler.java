@@ -25,6 +25,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
@@ -77,7 +78,7 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
         System.out.println("eventNew " + eventNew.toJSON());
         Event savedEvent = new Event();
         savedEvent.setId((String) eventNew.get("id"));
-        savedEvent.setPrincipalId((Integer) eventNew.get("principalId"));
+        savedEvent.setPrincipalId((BigDecimal.valueOf(Long.valueOf((String) eventNew.get("principalId"))).intValue()));
         savedEvent.setCreatedAt((String) eventNew.get("createdAt"));
         savedEvent.setBody((Map<String, String>) eventNew.get("body"));
 

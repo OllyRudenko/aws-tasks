@@ -62,9 +62,9 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
         Table table = dynamoDB.getTable(System.getenv("target_table"));
 
         Item item = new Item().withString("id", eventID)
-                        .withNumber("principalId", event.getPrincipalId())
-                        .withString("createdAt", event.getCreatedAt().toString())
-                        .withMap("body", event.getBody());
+                .withInt("principalId", event.getPrincipalId())
+                .withString("createdAt", event.getCreatedAt().toString())
+                .withMap("body", event.getBody());
 
         // get from DB saved object
         PutItemOutcome outcome = table
@@ -125,7 +125,7 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
     }
 
     public static void main(String[] args) throws ParseException, IOException {
-    String object = "{\"content\": {\"param1\": \"value1\", \"param2\": \"value2\"}}";
+        String object = "{\"content\": {\"param1\": \"value1\", \"param2\": \"value2\"}}";
         Gson g = new Gson();
         Map<String, String> parsed = g.fromJson(object, LinkedHashMap.class);
 //        JSONObject jsonObject = (JSONObject) new JSONParser().parse(object);

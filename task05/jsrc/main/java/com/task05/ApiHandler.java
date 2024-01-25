@@ -10,8 +10,6 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
-import com.amazonaws.services.s3.AmazonS3;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.syndicate.deployment.annotations.environment.EnvironmentVariable;
 import com.syndicate.deployment.annotations.environment.EnvironmentVariables;
@@ -36,17 +34,13 @@ import java.util.UUID;
         @EnvironmentVariable(key = "target_table", value = "${target_table}")
 })
 public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
-
-    private static final String TABLE_NAME = "Events";
-    private static final String INSERT = "INSERT";
-    private AmazonS3 s3Client;
-    private ObjectMapper objectMapper;
     JSONParser jsonParser = new JSONParser();
 
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent request, Context context) {
         String requestBody = request.getBody();
         System.out.println("!!!!!!! Received " + requestBody);
+
         AmazonDynamoDB clientDynamoDB = AmazonDynamoDBClientBuilder.standard()
                 .withRegion(System.getenv("region")).build();
         DynamoDB dynamoDB = new DynamoDB(clientDynamoDB);

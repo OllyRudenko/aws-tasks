@@ -79,7 +79,7 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
 
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent();
         response.setStatusCode(201);
-        response.setBody(eventNew.toJSON());
+        response.setBody(String.valueOf(eventNew));
         return response;
     }
 

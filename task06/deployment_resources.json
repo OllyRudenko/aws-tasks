@@ -55,8 +55,7 @@
       "table": "Configuration",
       "resource_type": "dynamodb_stream",
       "stream_view_type": "NEW_AND_OLD_IMAGES"
-    },
-    "external": true
+    }
   },
   "Audit": {
     "resource_type": "dynamodb_table",
@@ -65,7 +64,6 @@
     "read_capacity": 1,
     "write_capacity": 1,
     "global_indexes": [],
-    "autoscaling": [],
-    "external": true
+    "autoscaling": []
   }
 }

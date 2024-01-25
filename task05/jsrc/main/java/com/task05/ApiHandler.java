@@ -22,6 +22,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -45,7 +46,7 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent request, Context context) {
         String requestBody = request.getBody();
-        System.out.println("!!!!!!! Hello " + requestBody);
+        System.out.println("!!!!!!! Received " + requestBody);
         AmazonDynamoDB clientDynamoDB = AmazonDynamoDBClientBuilder.standard()
                 .withRegion(System.getenv("region")).build();
         DynamoDB dynamoDB = new DynamoDB(clientDynamoDB);
@@ -62,13 +63,10 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
         PutItemResult outcome = table
                 .putItem(item).getPutItemResult();
 
-        System.out.println("!!! event " + event);
-        StringBuilder sb = new StringBuilder(event.getId()).append(event.getPrincipalId()).append(event.getCreatedAt())
-                .append(event.getBody());
 
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent();
         response.setStatusCode(201);
-        response.setBody(sb.toString());
+        response.setBody(event.toString());
         return response;
     }
 
@@ -86,7 +84,7 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
 
         event.setId(generateUniqueID());
         event.setPrincipalId(Integer.parseInt((reqObject.get("principalId").toString())));
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneOffset.UTC);
         event.setCreatedAt(LocalDateTime.now().format(formatter));
 
         Map<String, String> body = getBodyValues(bodyJson.toString());

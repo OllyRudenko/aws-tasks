@@ -63,10 +63,12 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
                 .putItem(item).getPutItemResult();
 
         System.out.println("!!! event " + event);
+        StringBuilder sb = new StringBuilder(event.getId()).append(event.getPrincipalId()).append(event.getCreatedAt())
+                .append(event.getBody());
 
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent();
         response.setStatusCode(201);
-        response.setBody(event.toString());
+        response.setBody(sb.toString());
         return response;
     }
 

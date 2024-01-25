@@ -75,10 +75,15 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
         Item eventNew = getItemOutcome.getItem();
 
         System.out.println("eventNew " + eventNew.toJSON());
+        Event savedEvent = new Event();
+        savedEvent.setId((String) eventNew.get("id"));
+        savedEvent.setPrincipalId((Integer) eventNew.get("principalId"));
+        savedEvent.setCreatedAt((String) eventNew.get("createdAt"));
+        savedEvent.setBody((Map<String, String>) eventNew.get("body"));
 
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent();
         response.setStatusCode(201);
-        response.setBody(String.valueOf(eventNew));
+        response.setBody(String.valueOf(savedEvent));
         return response;
     }
 

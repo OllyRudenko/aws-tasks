@@ -1,9 +1,8 @@
-package com.awstasks.task05.model;
+package com.task05.model;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 
 public class Event {
     private String id;

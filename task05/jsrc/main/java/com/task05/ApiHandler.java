@@ -1,4 +1,4 @@
-package com.awstasks.task05;
+package com.task05;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
@@ -8,18 +8,12 @@ import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.PrimaryKey;
 import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
-import com.amazonaws.services.dynamodbv2.document.UpdateItemOutcome;
-import com.amazonaws.services.dynamodbv2.document.spec.PutItemSpec;
-import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
-import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
-import com.amazonaws.services.dynamodbv2.model.PutItemResult;
-import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.amazonaws.services.s3.AmazonS3;
-import com.awstasks.task05.model.Event;
+import com.task05.model.Event;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.syndicate.deployment.annotations.environment.EnvironmentVariable;
 import com.syndicate.deployment.annotations.environment.EnvironmentVariables;
@@ -28,7 +22,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -64,13 +57,15 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
         // save to DB
         Table table = dynamoDB.getTable(System.getenv("target_table"));
 
-        PutItemOutcome outcome = table
-                .putItem(new PutItemSpec().withItem(new Item().withString("id", eventID)
+        Item item = new Item().withString("id", eventID)
                         .withNumber("principalId", event.getPrincipalId())
                         .withString("createdAt", event.getCreatedAt().toString())
-                        .withMap("body", event.getBody())));
+                        .withMap("body", event.getBody());
 
         // get from DB saved object
+        PutItemOutcome outcome = table
+                .putItem(item);
+        System.out.println("Outcome !!! " + outcome);
         GetItemOutcome getItemOutcome = table.getItemOutcome(
                 new PrimaryKey("principalId", event.getPrincipalId()));
         Item eventNew = getItemOutcome.getItem();

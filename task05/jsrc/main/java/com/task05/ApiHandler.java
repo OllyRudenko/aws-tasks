@@ -62,6 +62,8 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
         PutItemResult outcome = table
                 .putItem(item).getPutItemResult();
 
+        System.out.println("!!! event " + event);
+
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent();
         response.setStatusCode(201);
         response.setBody(event.toString());

@@ -13,6 +13,8 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.amazonaws.services.s3.AmazonS3;
+import com.fasterxml.jackson.core.JsonParser;
+import com.google.gson.Gson;
 import com.task05.model.Event;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.syndicate.deployment.annotations.environment.EnvironmentVariable;
@@ -22,6 +24,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -95,11 +98,14 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
         JSONObject bodyJson;
         try {
             bodyJson = (JSONObject) new JSONParser().parse(reqObject.get("content").toString());
+            System.out.println("bodyJson !!!! " + bodyJson);
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
+        Gson g = new Gson();
+        Map<String, String> body = g.fromJson(bodyJson.toString(), LinkedHashMap.class);
 
-        Map<String, String> body = getBodyValues(bodyJson);
+        //Map<String, String> body = getBodyValues(bodyJson);
         event.setBody(body);
 
         return event;
@@ -114,6 +120,15 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
 
     private String generateUniqueID() {
         return UUID.randomUUID().toString();
+    }
+
+    public static void main(String[] args) throws ParseException, IOException {
+    String object = "{\"content\": {\"param1\": \"value1\", \"param2\": \"value2\"}}";
+        Gson g = new Gson();
+        Map<String, String> parsed = g.fromJson(object, LinkedHashMap.class);
+//        JSONObject jsonObject = (JSONObject) new JSONParser().parse(object);
+//    Map<String, String> parsed = new ObjectMapper().readValue((JsonParser) jsonObject.get("content"), LinkedHashMap.class);
+        System.out.println(parsed);
     }
 
 }

@@ -23,7 +23,8 @@ import java.util.Map;
 import java.util.UUID;
 
 @LambdaHandler(lambdaName = "audit_producer",
-        roleName = "audit_producer-role"
+        roleName = "audit_producer-role",
+        aliasName = "${lambdas_alias_name}"
 )
 @DynamoDbTriggerEventSource(targetTable = "Configuration", batchSize = 1)
 @EnvironmentVariables(value = {

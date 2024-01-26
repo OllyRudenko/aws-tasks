@@ -4,7 +4,9 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.document.ItemUtils;
 import com.amazonaws.services.dynamodbv2.document.Table;
+import com.amazonaws.services.dynamodbv2.document.internal.InternalUtils;
 import com.amazonaws.services.dynamodbv2.document.spec.PutItemSpec;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
@@ -58,13 +60,16 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, String> {
             String value = String.valueOf(receivedObject.getDynamodb().getNewImage().get("value"));
 
             Map<String, String> newImageConverted = new HashMap<>();
+//            for (Map.Entry entry : newImage.entrySet()) {
+//                newImageConverted.put(entry.getKey().toString().replace(",", ""), entry.getValue().toString().replace(",", ""));
+//            }
             for (Map.Entry entry : newImage.entrySet()) {
-                newImageConverted.put(entry.getKey().toString().replace(",", ""), entry.getValue().toString().replace(",", ""));
+                newImageConverted.put(ItemUtils.valToString(entry.getKey()), ItemUtils.valToString(entry.getValue()));
             }
 
             Item item = new Item()
                     .withString("id", generateUniqueID())
-                    .withString("itemKey", key)
+                    .withString("itemKey", ItemUtils.valToString(newImage.get("key").getS()))
                     .withString("modificationTime", LocalDateTime.now().format(formatter))
                     .withMap("newValue", newImageConverted);
 
@@ -82,12 +87,12 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, String> {
 
             auditTable
                     .putItem(new PutItemSpec().withItem(new Item()
-                            .withString("itemKey", newImageConverted.get("key"))
+                            .withString("itemKey", ItemUtils.valToString(newImage.get("key")))
                             .withString("id", generateUniqueID())
                             .withString("modificationTime", LocalDateTime.now().format(formatter))
                             .withString("updatedAttribute", "value")
-                            .withString("oldValue", String.valueOf(oldImage.get("value")).replace(",", ""))
-                            .withString("newValue", newImageConverted.get("value"))));
+                            .withString("oldValue", ItemUtils.valToString(oldImage.get("value")))
+                            .withString("newValue", ItemUtils.valToString(newImage.get("value")))));
         }
 
         return "Successfully processed " + ddbEvent.getRecords().size() + " records.";

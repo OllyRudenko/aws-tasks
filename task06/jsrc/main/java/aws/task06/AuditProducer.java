@@ -24,6 +24,7 @@ import java.util.UUID;
 
 @LambdaHandler(lambdaName = "audit_producer",
         roleName = "audit_producer-role",
+        isPublishVersion = true,
         aliasName = "${lambdas_alias_name}"
 )
 @DynamoDbTriggerEventSource(targetTable = "Configuration", batchSize = 1)

@@ -1,4 +1,4 @@
-package aws.syndicate.task06;
+package aws.task06;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
@@ -30,7 +30,7 @@ import java.util.UUID;
         @EnvironmentVariable(key = "region", value = "${region}"),
         @EnvironmentVariable(key = "target_table", value = "${target_table}")
 })
-public class AuditProducerStream implements RequestHandler<DynamodbEvent, String> {
+public class AuditProducer implements RequestHandler<DynamodbEvent, String> {
     private final static String INSERT_ACTION = "INSERT";
     private final static String MODIFY_ACTION = "MODIFY";
     private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
@@ -55,8 +55,10 @@ public class AuditProducerStream implements RequestHandler<DynamodbEvent, String
             Map<String, AttributeValue> newImage = receivedObject.getDynamodb().getNewImage();
 
             System.out.println("NoNConvert " + newImage);
+
             String key = String.valueOf(receivedObject.getDynamodb().getNewImage().get("key"));
             String value = String.valueOf(receivedObject.getDynamodb().getNewImage().get("value"));
+
             System.out.println(key + " " + value);
 
             Map<String, String> newImageConverted = new HashMap<>();

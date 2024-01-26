@@ -54,19 +54,16 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, String> {
         if (receivedObject.getEventName().equals(INSERT_ACTION)) {
             Map<String, AttributeValue> newImage = receivedObject.getDynamodb().getNewImage();
 
-            String key = String.valueOf(receivedObject.getDynamodb().getNewImage().get("key")).replace("{", "").replace("}", "").replace(",", "");
-            String value = String.valueOf(receivedObject.getDynamodb().getNewImage().get("value"));
-
             Map<String, String> newImageConverted = new HashMap<>();
             for (Map.Entry entry : newImage.entrySet()) {
-                newImageConverted.put(entry.getKey().toString().replace("{", "").replace("}", "").replace(",", ""), entry.getValue().toString().replace("{", "").replace("}", "").replace(",", ""));
+                newImageConverted.put(String.valueOf(entry.getKey()), newImage.get(entry.getKey()).getS());
             }
 
             Item item = new Item()
-                    .with("id", generateUniqueID())
-                    .with("itemKey", key)
-                    .with("modificationTime", LocalDateTime.now().format(formatter))
-                    .with("newValue", newImageConverted);
+                    .withString("id", generateUniqueID())
+                    .with("itemKey", newImage.get("key").getS())
+                    .withString("modificationTime", LocalDateTime.now().format(formatter))
+                    .withMap("newValue", newImageConverted);
 
             auditTable.putItem(item);
         }
@@ -77,16 +74,16 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, String> {
             Map<String, AttributeValue> oldImage = receivedObject.getDynamodb().getOldImage();
             Map<String, String> newImageConverted = new HashMap<>();
             for (Map.Entry entry : newImage.entrySet()) {
-                newImageConverted.put(entry.getKey().toString(), entry.getValue().toString().replace("{", "").replace("}", "").replace(",", ""));
+                newImageConverted.put(String.valueOf(entry.getKey()),  newImage.get(entry.getKey()).getS());
             }
 
             auditTable
                     .putItem(new PutItemSpec().withItem(new Item()
                             .with("itemKey", newImageConverted.get("key"))
-                            .with("id", generateUniqueID())
-                            .with("modificationTime", LocalDateTime.now().format(formatter))
-                            .with("updatedAttribute", "value")
-                            .with("oldValue", String.valueOf(oldImage.get("value")).replace("{", "").replace("}", "").replace(",", ""))
+                            .withString("id", generateUniqueID())
+                            .withString("modificationTime", LocalDateTime.now().format(formatter))
+                            .withString("updatedAttribute", "value")
+                            .with("oldValue", oldImage.get("value").getS())
                             .with("newValue", newImageConverted.get("value"))));
         }
 

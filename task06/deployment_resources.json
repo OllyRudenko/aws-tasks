@@ -1,4 +1,6 @@
 {
+  "lambda_path": "/Users/mac/aws-tasks/task06",
+  "func_name": "aws.task06.AuditProducer",
   "lambda-basic-execution": {
     "policy_content": {
       "Statement": [
@@ -32,6 +34,7 @@
   },
   "audit_producer-role": {
     "predefined_policies": [
+      "AmazonDynamoDBFullAccess"
     ],
     "principal_service": "lambda",
     "custom_policies": [

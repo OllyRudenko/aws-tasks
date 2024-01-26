@@ -59,8 +59,6 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, String> {
             String key = String.valueOf(receivedObject.getDynamodb().getNewImage().get("key"));
             String value = String.valueOf(receivedObject.getDynamodb().getNewImage().get("value"));
 
-            System.out.println(key + " " + value);
-
             Map<String, String> newImageConverted = new HashMap<>();
             for (Map.Entry entry : newImage.entrySet()) {
                 newImageConverted.put(entry.getKey().toString(), entry.getValue().toString());
@@ -85,9 +83,11 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, String> {
             for (Map.Entry entry : newImage.entrySet()) {
                 newImageConverted.put(entry.getKey().toString(), entry.getValue().toString());
             }
+            Item takeUuid = auditTable.getItem("itemKey", newImageConverted.get("key"), "itemKey, id, modificationTime, newValue", null);
             auditTable
                     .putItem(new PutItemSpec().withItem(new Item()
                             .withString("itemKey", newImageConverted.get("key"))
+                                    .withString("id", String.valueOf(takeUuid.get("id")))
                             .withString("modificationTime", LocalDateTime.now().format(formatter))
                             .withString("updatedAttribute", "value")
                             .withString("oldValue", String.valueOf(oldImage.get("value")))

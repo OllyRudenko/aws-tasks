@@ -35,7 +35,6 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, String> {
     private final static String MODIFY_ACTION = "MODIFY";
     private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             .withZone(ZoneOffset.UTC);
-    private final static String regex = "\\{|\\}|\\,";
 
     public String handleRequest(DynamodbEvent ddbEvent, Context context) {
         for (DynamodbEvent.DynamodbStreamRecord record : ddbEvent.getRecords()) {
@@ -55,12 +54,12 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, String> {
         if (receivedObject.getEventName().equals(INSERT_ACTION)) {
             Map<String, AttributeValue> newImage = receivedObject.getDynamodb().getNewImage();
 
-            String key = String.valueOf(receivedObject.getDynamodb().getNewImage().get("key")).replace(regex, "");
+            String key = String.valueOf(receivedObject.getDynamodb().getNewImage().get("key")).replace("{", "").replace("}", "").replace(",", "");
             String value = String.valueOf(receivedObject.getDynamodb().getNewImage().get("value"));
 
             Map<String, String> newImageConverted = new HashMap<>();
             for (Map.Entry entry : newImage.entrySet()) {
-                newImageConverted.put(entry.getKey().toString().replace(regex, ""), entry.getValue().toString().replace(regex, ""));
+                newImageConverted.put(entry.getKey().toString().replace("{", "").replace("}", "").replace(",", ""), entry.getValue().toString().replace("{", "").replace("}", "").replace(",", ""));
             }
 
             Item item = new Item()
@@ -78,7 +77,7 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, String> {
             Map<String, AttributeValue> oldImage = receivedObject.getDynamodb().getOldImage();
             Map<String, String> newImageConverted = new HashMap<>();
             for (Map.Entry entry : newImage.entrySet()) {
-                newImageConverted.put(entry.getKey().toString(), entry.getValue().toString().replace(regex, ""));
+                newImageConverted.put(entry.getKey().toString(), entry.getValue().toString().replace("{", "").replace("}", "").replace(",", ""));
             }
 
             auditTable
@@ -87,7 +86,7 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, String> {
                             .withString("id", generateUniqueID())
                             .withString("modificationTime", LocalDateTime.now().format(formatter))
                             .withString("updatedAttribute", "value")
-                            .withString("oldValue", String.valueOf(oldImage.get("value")).replace(regex, ""))
+                            .withString("oldValue", String.valueOf(oldImage.get("value")).replace("{", "").replace("}", "").replace(",", ""))
                             .withString("newValue", newImageConverted.get("value"))));
         }
 

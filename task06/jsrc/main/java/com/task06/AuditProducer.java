@@ -54,8 +54,6 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, String> {
         if (receivedObject.getEventName().equals(INSERT_ACTION)) {
             Map<String, AttributeValue> newImage = receivedObject.getDynamodb().getNewImage();
 
-            System.out.println("NoNConvert " + newImage);
-
             String key = String.valueOf(receivedObject.getDynamodb().getNewImage().get("key"));
             String value = String.valueOf(receivedObject.getDynamodb().getNewImage().get("value"));
 
@@ -64,13 +62,11 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, String> {
                 newImageConverted.put(entry.getKey().toString(), entry.getValue().toString());
             }
 
-            System.out.println("Convert " + newImageConverted);
-
             Item item = new Item()
                     .withString("id", generateUniqueID())
                     .withString("itemKey", key)
                     .withString("modificationTime", LocalDateTime.now().format(formatter))
-                    .withMap("newValue", newImage);
+                    .withMap("newValue", newImageConverted);
 
             auditTable.putItem(item);
         }
@@ -80,18 +76,18 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, String> {
             Map<String, AttributeValue> newImage = receivedObject.getDynamodb().getNewImage();
             Map<String, AttributeValue> oldImage = receivedObject.getDynamodb().getOldImage();
             Map<String, String> newImageConverted = new HashMap<>();
-//            for (Map.Entry entry : newImage.entrySet()) {
-//                newImageConverted.put(entry.getKey().toString(), entry.getValue().toString());
-//            }
-            Item takeUuid = auditTable.getItem("itemKey", newImage.get("key"), "itemKey, id, modificationTime, newValue", null);
+            for (Map.Entry entry : newImage.entrySet()) {
+                newImageConverted.put(entry.getKey().toString(), entry.getValue().toString());
+            }
+
             auditTable
                     .putItem(new PutItemSpec().withItem(new Item()
-                            .withString("itemKey", String.valueOf(takeUuid.get("itemKey")))
-                            .withString("id", String.valueOf(takeUuid.get("id")))
+                            .withString("itemKey", newImageConverted.get("key"))
+                            .withString("id", generateUniqueID())
                             .withString("modificationTime", LocalDateTime.now().format(formatter))
                             .withString("updatedAttribute", "value")
                             .withString("oldValue", String.valueOf(oldImage.get("value")))
-                            .withString("newValue", String.valueOf(newImage.get("value")))));
+                            .withString("newValue", newImageConverted.get("value"))));
         }
 
         return "Successfully processed " + ddbEvent.getRecords().size() + " records.";

@@ -63,10 +63,10 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, String> {
             }
 
             Item item = new Item()
-                    .withString("id", generateUniqueID())
-                    .withString("itemKey", key)
-                    .withString("modificationTime", LocalDateTime.now().format(formatter))
-                    .withMap("newValue", newImageConverted);
+                    .with("id", generateUniqueID())
+                    .with("itemKey", key)
+                    .with("modificationTime", LocalDateTime.now().format(formatter))
+                    .with("newValue", newImageConverted);
 
             auditTable.putItem(item);
         }
@@ -82,12 +82,12 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, String> {
 
             auditTable
                     .putItem(new PutItemSpec().withItem(new Item()
-                            .withString("itemKey", newImageConverted.get("key"))
-                            .withString("id", generateUniqueID())
-                            .withString("modificationTime", LocalDateTime.now().format(formatter))
-                            .withString("updatedAttribute", "value")
-                            .withString("oldValue", String.valueOf(oldImage.get("value")).replace("{", "").replace("}", "").replace(",", ""))
-                            .withString("newValue", newImageConverted.get("value"))));
+                            .with("itemKey", newImageConverted.get("key"))
+                            .with("id", generateUniqueID())
+                            .with("modificationTime", LocalDateTime.now().format(formatter))
+                            .with("updatedAttribute", "value")
+                            .with("oldValue", String.valueOf(oldImage.get("value")).replace("{", "").replace("}", "").replace(",", ""))
+                            .with("newValue", newImageConverted.get("value"))));
         }
 
         return "Successfully processed " + ddbEvent.getRecords().size() + " records.";

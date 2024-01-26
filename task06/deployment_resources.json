@@ -32,7 +32,6 @@
   },
   "audit_producer-role": {
     "predefined_policies": [
-      "AmazonDynamoDBFullAccess"
     ],
     "principal_service": "lambda",
     "custom_policies": [

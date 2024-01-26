@@ -54,9 +54,6 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, String> {
         if (receivedObject.getEventName().equals(INSERT_ACTION)) {
             Map<String, AttributeValue> newImage = receivedObject.getDynamodb().getNewImage();
 
-            String key = String.valueOf(receivedObject.getDynamodb().getNewImage().get("key"));
-            String value = String.valueOf(receivedObject.getDynamodb().getNewImage().get("value"));
-
             Map<String, String> newImageConverted = new HashMap<>();
             for (Map.Entry entry : newImage.entrySet()) {
                 newImageConverted.put(entry.getKey().toString(), entry.getValue().toString());
@@ -64,9 +61,9 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, String> {
 
             Item item = new Item()
                     .withString("id", generateUniqueID())
-                    .withString("itemKey", key)
+                    .withString("itemKey", newImage.get("key").getS())
                     .withString("modificationTime", LocalDateTime.now().format(formatter))
-                    .withMap("newValue", newImageConverted);
+                    .withMap("newValue", newImage);
 
             auditTable.putItem(item);
         }
@@ -82,12 +79,12 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, String> {
 
             auditTable
                     .putItem(new PutItemSpec().withItem(new Item()
-                            .withString("itemKey", newImageConverted.get("key"))
+                            .withString("itemKey", newImage.get("key").getS())
                             .withString("id", generateUniqueID())
                             .withString("modificationTime", LocalDateTime.now().format(formatter))
                             .withString("updatedAttribute", "value")
-                            .withString("oldValue", String.valueOf(oldImage.get("value")))
-                            .withString("newValue", newImageConverted.get("value"))));
+                            .withString("oldValue", oldImage.get("value").getS())
+                            .withString("newValue", newImage.get("value").getS())));
         }
 
         return "Successfully processed " + ddbEvent.getRecords().size() + " records.";

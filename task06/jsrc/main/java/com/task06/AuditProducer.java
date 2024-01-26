@@ -4,9 +4,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
-import com.amazonaws.services.dynamodbv2.document.ItemUtils;
 import com.amazonaws.services.dynamodbv2.document.Table;
-import com.amazonaws.services.dynamodbv2.document.internal.InternalUtils;
 import com.amazonaws.services.dynamodbv2.document.spec.PutItemSpec;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
@@ -37,6 +35,7 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, String> {
     private final static String MODIFY_ACTION = "MODIFY";
     private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             .withZone(ZoneOffset.UTC);
+    private final static String regex = "\\{|\\}|\\,";
 
     public String handleRequest(DynamodbEvent ddbEvent, Context context) {
         for (DynamodbEvent.DynamodbStreamRecord record : ddbEvent.getRecords()) {
@@ -56,20 +55,17 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, String> {
         if (receivedObject.getEventName().equals(INSERT_ACTION)) {
             Map<String, AttributeValue> newImage = receivedObject.getDynamodb().getNewImage();
 
-            String key = String.valueOf(receivedObject.getDynamodb().getNewImage().get("key")).replace(",", "");
+            String key = String.valueOf(receivedObject.getDynamodb().getNewImage().get("key")).replace(regex, "");
             String value = String.valueOf(receivedObject.getDynamodb().getNewImage().get("value"));
 
             Map<String, String> newImageConverted = new HashMap<>();
-//            for (Map.Entry entry : newImage.entrySet()) {
-//                newImageConverted.put(entry.getKey().toString().replace(",", ""), entry.getValue().toString().replace(",", ""));
-//            }
             for (Map.Entry entry : newImage.entrySet()) {
-                newImageConverted.put(ItemUtils.valToString(entry.getKey()), ItemUtils.valToString(entry.getValue()));
+                newImageConverted.put(entry.getKey().toString().replace(regex, ""), entry.getValue().toString().replace(regex, ""));
             }
 
             Item item = new Item()
                     .withString("id", generateUniqueID())
-                    .withString("itemKey", ItemUtils.valToString(newImage.get("key").getS()))
+                    .withString("itemKey", key)
                     .withString("modificationTime", LocalDateTime.now().format(formatter))
                     .withMap("newValue", newImageConverted);
 
@@ -82,17 +78,17 @@ public class AuditProducer implements RequestHandler<DynamodbEvent, String> {
             Map<String, AttributeValue> oldImage = receivedObject.getDynamodb().getOldImage();
             Map<String, String> newImageConverted = new HashMap<>();
             for (Map.Entry entry : newImage.entrySet()) {
-                newImageConverted.put(entry.getKey().toString(), entry.getValue().toString().replace(",", ""));
+                newImageConverted.put(entry.getKey().toString(), entry.getValue().toString().replace(regex, ""));
             }
 
             auditTable
                     .putItem(new PutItemSpec().withItem(new Item()
-                            .withString("itemKey", ItemUtils.valToString(newImage.get("key")))
+                            .withString("itemKey", newImageConverted.get("key"))
                             .withString("id", generateUniqueID())
                             .withString("modificationTime", LocalDateTime.now().format(formatter))
                             .withString("updatedAttribute", "value")
-                            .withString("oldValue", ItemUtils.valToString(oldImage.get("value")))
-                            .withString("newValue", ItemUtils.valToString(newImage.get("value")))));
+                            .withString("oldValue", String.valueOf(oldImage.get("value")).replace(regex, ""))
+                            .withString("newValue", newImageConverted.get("value"))));
         }
 
         return "Successfully processed " + ddbEvent.getRecords().size() + " records.";

@@ -52,7 +52,7 @@
                 <version>${deployment-configuration-annotations.version}</version>
                 <configuration>
                     <packages>
-                        <package>aws.task06</package>
+                        <package>com.task06</package>
                     </packages>
                     <fileName>${project.name}-${project.version}.jar</fileName>
                 </configuration>

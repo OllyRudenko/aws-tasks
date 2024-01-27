@@ -15,7 +15,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @LambdaHandler(lambdaName = "uuid_generator",
@@ -49,10 +51,11 @@ public class UuidGenerator implements RequestHandler<Object, Map<String, Object>
 
     private String createFileAndFillItUuids() {
         StringBuilder content = new StringBuilder();
+        Set<UUID> uuidSet = new HashSet<>();
         for (int i = 0; i < 10; i++) {
-            content.append(generateUniqueID()).append("\n");
+            uuidSet.add(generateUniqueID());
         }
-        return content.toString();
+        return content.append(uuidSet).toString();
     }
 
     private String getFilePath() {
@@ -61,8 +64,8 @@ public class UuidGenerator implements RequestHandler<Object, Map<String, Object>
         return filePath;
     }
 
-    private static String generateUniqueID() {
-        return UUID.randomUUID().toString();
+    private UUID generateUniqueID() {
+        return UUID.randomUUID();
     }
 }
 

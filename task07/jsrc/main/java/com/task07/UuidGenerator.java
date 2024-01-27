@@ -4,7 +4,12 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.JSONType;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.syndicate.deployment.annotations.environment.EnvironmentVariable;
 import com.syndicate.deployment.annotations.environment.EnvironmentVariables;
 import com.syndicate.deployment.annotations.events.RuleEventSource;
@@ -14,8 +19,10 @@ import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -31,7 +38,6 @@ import java.util.UUID;
 public class UuidGenerator implements RequestHandler<Object, Map<String, Object>> {
     private final static DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             .withZone(ZoneOffset.UTC);
-    private final static String TYPE = ".txt";
 
     public Map<String, Object> handleRequest(Object request, Context context) {
         AmazonS3 s3Client = AmazonS3ClientBuilder.standard().build();
@@ -49,23 +55,44 @@ public class UuidGenerator implements RequestHandler<Object, Map<String, Object>
         return resultMap;
     }
 
-    private String createFileAndFillItUuids() {
-        StringBuilder content = new StringBuilder();
-        Set<UUID> uuidSet = new HashSet<>();
+    private String createFileAndFillItUuids(){
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        List<String> uuidSet = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             uuidSet.add(generateUniqueID());
         }
-        return content.append(uuidSet).toString();
+        Map<String, List> map = new HashMap<>();
+        map.put("ids", uuidSet);
+        String content = null;
+        try {
+            content = ow.writeValueAsString(map);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return content;
     }
 
     private String getFilePath() {
         String isoTime = LocalDateTime.now().format(FORMATTER);
-        String filePath = isoTime.concat(TYPE);
+        String filePath = isoTime;
         return filePath;
     }
 
-    private UUID generateUniqueID() {
-        return UUID.randomUUID();
+    private static String generateUniqueID() {
+        return UUID.randomUUID().toString();
+    }
+
+    public static void main(String[] args) throws JsonProcessingException {
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        //String json = ow.writeValueAsString(object);
+        StringBuilder content = new StringBuilder();
+        List<String> uuidSet = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            uuidSet.add(generateUniqueID());
+        }
+        Map<String, List> map = new HashMap<>();
+        map.put("ids", uuidSet);
+        System.out.println(ow.writeValueAsString(map));
     }
 }
 

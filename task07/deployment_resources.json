@@ -1,0 +1,54 @@
+{
+  "lambda-basic-execution": {
+    "policy_content": {
+      "Statement": [
+        {
+          "Action": [
+            "logs:CreateLogGroup",
+            "logs:CreateLogStream",
+            "logs:PutLogEvents",
+            "dynamodb:GetItem",
+            "dynamodb:Query",
+            "dynamodb:PutItem",
+            "dynamodb:Batch*",
+            "dynamodb:DeleteItem",
+            "ssm:PutParameter",
+            "ssm:GetParameter",
+            "kms:Decrypt",
+            "lambda:InvokeFunction",
+            "s3:*"
+          ],
+          "Effect": "Allow",
+          "Resource": "*"
+        }
+      ],
+      "Version": "2012-10-17"
+    },
+    "resource_type": "iam_policy"
+  },
+  "uuid_generator-role": {
+    "predefined_policies": [
+      "AmazonS3FullAccess",
+      "CloudWatchEventsFullAccess",
+      "AmazonEventBridgeFullAccess"
+    ],
+    "principal_service": "lambda",
+    "custom_policies": [
+      "lambda-basic-execution"
+    ],
+    "resource_type": "iam_role",
+    "allowed_accounts": [
+      "${account_id}"
+    ]
+  },
+  "${target_bucket}": {
+    "resource_type": "s3_bucket",
+    "location": "eu-central-1",
+    "acl": "private"
+  },
+  "uuid_trigger": {
+    "resource_type": "cloudwatch_rule",
+    "rule_type": "schedule",
+    "expression": "rate(1 minute)"
+  }
+}

@@ -1,4 +1,4 @@
-package com.awstasks.task08.meteo;
+package com.task08;
 
 import java.io.BufferedReader;
 import java.io.IOException;

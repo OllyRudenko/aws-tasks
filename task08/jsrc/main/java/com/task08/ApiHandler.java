@@ -14,7 +14,8 @@ import java.util.Map;
 import static com.awstasks.task08.MeteoApi.getWeatherForecast;
 
 @LambdaHandler(lambdaName = "api_handler",
-	roleName = "api_handler-role"
+	roleName = "api_handler-role",
+		layers = {"sdk-layer"}
 )
 @LambdaLayer(
 		layerName = "sdk-layer",

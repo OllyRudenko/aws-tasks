@@ -65,7 +65,7 @@ public class Processor implements RequestHandler<Object, Map<String, Object>> {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("statusCode", 200);
         resultMap.put("id", item.get("id").toString());
-        resultMap.put("forecast", item.get("forecast").toString());
+        resultMap.put("forecast", item.get("forecast"));
         return resultMap;
     }
 

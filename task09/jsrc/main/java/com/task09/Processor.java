@@ -5,6 +5,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.Table;
+import com.amazonaws.services.dynamodbv2.document.spec.PutItemSpec;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.syndicate.deployment.annotations.LambdaUrlConfig;
@@ -54,7 +55,7 @@ public class Processor implements RequestHandler<Object, Map<String, Object>> {
         Item item = new Item()
                 .withString("id", generateUniqueID())
                 .with("forecast", forecast);
-        auditTable.putItem(item);
+        auditTable.putItem(new PutItemSpec().withItem(item));
 
         System.out.println("Hello from lambda X-RAY");
         Map<String, Object> resultMap = getResponse(item);

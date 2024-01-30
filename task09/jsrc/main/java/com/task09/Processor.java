@@ -42,10 +42,10 @@ import java.util.UUID;
 public class Processor implements RequestHandler<Object, Map<String, Object>> {
 
     public Map<String, Object> handleRequest(Object request, Context context) {
-        Forecast forecast = null;
+        Map<String, Object> itemMap;
 
         try {
-            forecast = convertWeatherDataToObject(MeteoApi.getWeatherForecast());
+            itemMap = convertWeatherDataToObject(MeteoApi.getWeatherForecast());
         } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
@@ -58,8 +58,7 @@ public class Processor implements RequestHandler<Object, Map<String, Object>> {
         Table auditTable = dynamoDB.getTable(System.getenv("target_table"));
 
         Item item = new Item()
-                .withString("id", generateUniqueID())
-                .with("forecast", forecast.toString());
+                .with("item", itemMap);
         auditTable.putItem(new PutItemSpec().withItem(item));
 
         System.out.println("Hello from lambda X-RAY");
@@ -83,34 +82,46 @@ public class Processor implements RequestHandler<Object, Map<String, Object>> {
         System.out.println(convertWeatherDataToObject(MeteoApi.getWeatherForecast()));
     }
 
-    public static Forecast convertWeatherDataToObject(String weatherData) throws ParseException, IOException {
-        Forecast forecast = new Forecast();
+    public static Map<String, Object> convertWeatherDataToObject(String weatherData) throws ParseException, IOException {
+        Map<String, Object> item = new HashMap<>();
+        item.put("id", generateUniqueID());
+
         JSONObject jsonParser = (JSONObject) new JSONParser().parse(weatherData);
-        System.out.println(jsonParser);
 
         Double elevation = (Double) new JSONParser().parse(jsonParser.get("elevation").toString());
-        forecast.setElevation(elevation);
         Double generationtime_ms = (Double) new JSONParser().parse(jsonParser.get("generationtime_ms").toString());
-        forecast.setGenerationtime_ms(generationtime_ms);
-
-        Map<String, List> hourly = (Map<String, List>) new JSONParser().parse(jsonParser.get("hourly").toString());
-        forecast.setHourly(hourly);
-
+        Map<String, List> hourlyJSON = (Map<String, List>) new JSONParser().parse(jsonParser.get("hourly").toString());
         Map<String, String> hourly_units = (Map<String, String>) new JSONParser().parse(jsonParser.get("hourly_units").toString());
-        forecast.setHourly_units(hourly_units);
-
         Double latitude = (Double) new JSONParser().parse(jsonParser.get("latitude").toString());
-        forecast.setLatitude(latitude);
-
         Double longitude = (Double) new JSONParser().parse(jsonParser.get("longitude").toString());
-        forecast.setLongitude(longitude);
-
-        forecast.setTimezone("Europe/Kiev");
-        forecast.setTimezone_abbreviation("EET");
-
         Long utc_offset_seconds = (Long) new JSONParser().parse(jsonParser.get("utc_offset_seconds").toString());
-        forecast.setUtc_offset_seconds(utc_offset_seconds);
 
-        return forecast;
+
+
+        Map<String, Object> forecast = new HashMap<>();
+        forecast.put("elevation", elevation);
+        forecast.put("generationtime_ms", generationtime_ms);
+
+        Map<String, Object> hourly = new HashMap<>();
+        hourly.put("temperature_2m", hourlyJSON.get("temperature_2m"));
+        hourly.put("time", hourlyJSON.get("time"));
+
+        forecast.put("hourly", hourly);
+
+        Map<String, String> hourlyUnits = new HashMap<>();
+        hourlyUnits.put("temperature_2m", hourly_units.get("temperature_2m"));
+        hourlyUnits.put("time", hourly_units.get("time"));
+
+        forecast.put("hourly_units", hourlyUnits);
+
+        forecast.put("latitude", latitude);
+        forecast.put("longitude", longitude);
+        forecast.put("timezone", "Europe/Kiev");
+        forecast.put("timezone_abbreviation", "EET");
+        forecast.put("utc_offset_seconds", utc_offset_seconds);
+
+        item.put("forecast", forecast);
+
+        return item;
     }
 }

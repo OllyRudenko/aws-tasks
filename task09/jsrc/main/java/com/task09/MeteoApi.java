@@ -1,5 +1,9 @@
 package com.task09;
 
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,7 +32,6 @@ public class MeteoApi {
                 while ((line = reader.readLine()) != null) {
                     response.append(line);
                 }
-
                 return response.toString();
             } else {
                 System.out.println("Error fetching weather forecast. Response code: " + responseCode);

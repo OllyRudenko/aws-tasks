@@ -15,9 +15,14 @@ import com.syndicate.deployment.annotations.lambda.LambdaHandler;
 import com.syndicate.deployment.model.TracingMode;
 import com.syndicate.deployment.model.lambda.url.AuthType;
 import com.syndicate.deployment.model.lambda.url.InvokeMode;
+import com.task09.model.Forecast;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -37,11 +42,11 @@ import java.util.UUID;
 public class Processor implements RequestHandler<Object, Map<String, Object>> {
 
     public Map<String, Object> handleRequest(Object request, Context context) {
-        String forecast = "";
+        Forecast forecast = null;
 
         try {
-            forecast = MeteoApi.getWeatherForecast();
-        } catch (IOException e) {
+            forecast = convertWeatherDataToObject(MeteoApi.getWeatherForecast());
+        } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
 
@@ -72,5 +77,40 @@ public class Processor implements RequestHandler<Object, Map<String, Object>> {
 
     private static String generateUniqueID() {
         return UUID.randomUUID().toString();
+    }
+
+    public static void main(String[] args) throws IOException, ParseException {
+        System.out.println(convertWeatherDataToObject(MeteoApi.getWeatherForecast()));
+    }
+
+    public static Forecast convertWeatherDataToObject(String weatherData) throws ParseException, IOException {
+        Forecast forecast = new Forecast();
+        JSONObject jsonParser = (JSONObject) new JSONParser().parse(weatherData);
+        System.out.println(jsonParser);
+
+        Double elevation = (Double) new JSONParser().parse(jsonParser.get("elevation").toString());
+        forecast.setElevation(elevation);
+        Double generationtime_ms = (Double) new JSONParser().parse(jsonParser.get("generationtime_ms").toString());
+        forecast.setGenerationtime_ms(generationtime_ms);
+
+        Map<String, List> hourly = (Map<String, List>) new JSONParser().parse(jsonParser.get("hourly").toString());
+        forecast.setHourly(hourly);
+
+        Map<String, String> hourly_units = (Map<String, String>) new JSONParser().parse(jsonParser.get("hourly_units").toString());
+        forecast.setHourly_units(hourly_units);
+
+        Double latitude = (Double) new JSONParser().parse(jsonParser.get("latitude").toString());
+        forecast.setLatitude(latitude);
+
+        Double longitude = (Double) new JSONParser().parse(jsonParser.get("longitude").toString());
+        forecast.setLongitude(longitude);
+
+        forecast.setTimezone("Europe/Kiev");
+        forecast.setTimezone_abbreviation("EET");
+
+        Long utc_offset_seconds = (Long) new JSONParser().parse(jsonParser.get("utc_offset_seconds").toString());
+        forecast.setUtc_offset_seconds(utc_offset_seconds);
+
+        return forecast;
     }
 }

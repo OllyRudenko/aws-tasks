@@ -15,7 +15,6 @@ import com.syndicate.deployment.annotations.lambda.LambdaHandler;
 import com.syndicate.deployment.model.TracingMode;
 import com.syndicate.deployment.model.lambda.url.AuthType;
 import com.syndicate.deployment.model.lambda.url.InvokeMode;
-import com.task09.model.Forecast;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -52,13 +51,13 @@ public class Processor implements RequestHandler<Object, Map<String, Object>> {
 
         AmazonDynamoDB clientDynamoDB = AmazonDynamoDBClientBuilder.standard()
                 .withRegion(System.getenv("region"))
-                //.withRequestHandlers(new TracingHandler(AWSXRay.getGlobalRecorder()))
                 .build();
         DynamoDB dynamoDB = new DynamoDB(clientDynamoDB);
         Table auditTable = dynamoDB.getTable(System.getenv("target_table"));
 
         Item item = new Item()
-                .with("item", itemMap);
+                .withString("id", itemMap.get("id").toString())
+                .with("forecast", itemMap.get("forecast"));
         auditTable.putItem(new PutItemSpec().withItem(item));
 
         System.out.println("Hello from lambda X-RAY");
@@ -95,7 +94,6 @@ public class Processor implements RequestHandler<Object, Map<String, Object>> {
         Double latitude = (Double) new JSONParser().parse(jsonParser.get("latitude").toString());
         Double longitude = (Double) new JSONParser().parse(jsonParser.get("longitude").toString());
         Long utc_offset_seconds = (Long) new JSONParser().parse(jsonParser.get("utc_offset_seconds").toString());
-
 
 
         Map<String, Object> forecast = new HashMap<>();

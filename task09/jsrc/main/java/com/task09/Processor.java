@@ -59,7 +59,7 @@ public class Processor implements RequestHandler<Object, Map<String, Object>> {
 
         Item item = new Item()
                 .withString("id", generateUniqueID())
-                .with("forecast", forecast);
+                .with("forecast", forecast.toString());
         auditTable.putItem(new PutItemSpec().withItem(item));
 
         System.out.println("Hello from lambda X-RAY");

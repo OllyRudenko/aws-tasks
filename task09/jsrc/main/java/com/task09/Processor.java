@@ -21,7 +21,6 @@ import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -77,10 +76,6 @@ public class Processor implements RequestHandler<Object, Map<String, Object>> {
         return UUID.randomUUID().toString();
     }
 
-    public static void main(String[] args) throws IOException, ParseException {
-        System.out.println(convertWeatherDataToObject(MeteoApi.getWeatherForecast()));
-    }
-
     public static Map<String, Object> convertWeatherDataToObject(String weatherData) throws ParseException, IOException {
         Map<String, Object> item = new HashMap<>();
         item.put("id", generateUniqueID());
@@ -89,28 +84,17 @@ public class Processor implements RequestHandler<Object, Map<String, Object>> {
 
         Double elevation = (Double) new JSONParser().parse(jsonParser.get("elevation").toString());
         Double generationtime_ms = (Double) new JSONParser().parse(jsonParser.get("generationtime_ms").toString());
-        Map<String, List> hourlyJSON = (Map<String, List>) new JSONParser().parse(jsonParser.get("hourly").toString());
+        Map<String, Object> hourlyJSON = (Map<String, Object>) new JSONParser().parse(jsonParser.get("hourly").toString());
         Map<String, String> hourly_units = (Map<String, String>) new JSONParser().parse(jsonParser.get("hourly_units").toString());
         Double latitude = (Double) new JSONParser().parse(jsonParser.get("latitude").toString());
         Double longitude = (Double) new JSONParser().parse(jsonParser.get("longitude").toString());
         Long utc_offset_seconds = (Long) new JSONParser().parse(jsonParser.get("utc_offset_seconds").toString());
 
-
         Map<String, Object> forecast = new HashMap<>();
         forecast.put("elevation", elevation);
         forecast.put("generationtime_ms", generationtime_ms);
-
-        Map<String, Object> hourly = new HashMap<>();
-        hourly.put("temperature_2m", hourlyJSON.get("temperature_2m"));
-        hourly.put("time", hourlyJSON.get("time"));
-
-        forecast.put("hourly", hourly);
-
-        Map<String, String> hourlyUnits = new HashMap<>();
-        hourlyUnits.put("temperature_2m", hourly_units.get("temperature_2m"));
-        hourlyUnits.put("time", hourly_units.get("time"));
-
-        forecast.put("hourly_units", hourlyUnits);
+        forecast.put("hourly", hourlyJSON);
+        forecast.put("hourly_units", hourly_units);
 
         forecast.put("latitude", latitude);
         forecast.put("longitude", longitude);

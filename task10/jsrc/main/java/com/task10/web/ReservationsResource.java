@@ -1,11 +1,11 @@
-package com.awstasks.task10.web;
+package com.task10.web;
 
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
-import com.awstasks.task10.dynamoDB.ReservationDynamoDB;
-import com.awstasks.task10.service.CognitoService;
-import com.awstasks.task10.service.CognitoServiceImpl;
-import com.awstasks.task10.utils.ConverterUtil;
+import com.task10.dynamoDB.ReservationDynamoDB;
+import com.task10.service.CognitoService;
+import com.task10.service.CognitoServiceImpl;
+import com.task10.utils.ConverterUtil;
 import com.google.gson.Gson;
 
 import java.util.HashMap;

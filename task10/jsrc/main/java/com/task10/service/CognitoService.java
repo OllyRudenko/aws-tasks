@@ -1,4 +1,4 @@
-package com.awstasks.task10.service;
+package com.task10.service;
 
 import com.amazonaws.services.cognitoidp.model.SignUpResult;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;

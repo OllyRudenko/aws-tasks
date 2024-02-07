@@ -1,4 +1,4 @@
-package com.awstasks.task10.models;
+package com.task10.models;
 
 import java.util.Objects;
 

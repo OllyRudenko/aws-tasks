@@ -1,4 +1,4 @@
-package com.awstasks.task10.utils;
+package com.task10.utils;
 
 import java.util.List;
 

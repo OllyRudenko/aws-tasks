@@ -1,4 +1,4 @@
-package com.awstasks.task10.web;
+package com.task10.web;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 

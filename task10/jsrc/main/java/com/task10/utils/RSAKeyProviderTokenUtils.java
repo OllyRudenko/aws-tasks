@@ -1,4 +1,4 @@
-package com.awstasks.task10.utils;
+package com.task10.utils;
 
 import com.auth0.jwk.JwkException;
 import com.auth0.jwk.JwkProvider;

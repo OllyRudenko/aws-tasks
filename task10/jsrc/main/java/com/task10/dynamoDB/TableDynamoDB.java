@@ -53,13 +53,13 @@ public class TableDynamoDB {
         try {
             System.out.println("Start try clientDynamoDB.putItem(request)");
             PutItemResult response = clientDynamoDB.putItem(request);
-            System.out.println(tableName + " was successfully saved. The request id is "
-                    + response.getItemCollectionMetrics().toString());
+            System.out.println(tableName + " was successfully saved.");
             return true;
         } catch (ResourceNotFoundException e) {
             System.err.format("Error: The Amazon DynamoDB table \"%s\" can't be found.\n", tableName);
             System.err.println("Be sure that it exists and that you've typed its name correctly!");
         } catch (RuntimeException e) {
+            e.printStackTrace(System.out);
             System.err.println(e.getMessage());
         }
         System.out.println("return false");

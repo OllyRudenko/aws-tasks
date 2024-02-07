@@ -82,7 +82,8 @@ public class CognitoServiceImpl implements CognitoService {
             );
         } catch (CognitoIdentityProviderException e) {
             System.err.println(e.awsErrorDetails().errorMessage());
-            System.exit(1);
+            throw new RuntimeException(e.getMessage());
+//            System.exit(1);
         }
     }
 

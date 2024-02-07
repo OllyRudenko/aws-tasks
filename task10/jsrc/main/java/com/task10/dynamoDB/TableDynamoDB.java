@@ -79,12 +79,6 @@ public class TableDynamoDB {
             // Виконуємо сканування таблиці та отримуємо відповідь
             ScanResult response = clientDynamoDB.scan(scanRequest);
 
-            // Виводимо всі елементи
-            //                System.out.println("Item:");
-            //                for (Map.Entry<String, AttributeValue> entry : item.entrySet()) {
-            //                    System.out.println(entry.getKey() + ": " + entry.getValue());
-            //                }
-            //                System.out.println();
             itemList.addAll(response.getItems());
         } catch (RuntimeException e) {
             System.err.println(e.getMessage());

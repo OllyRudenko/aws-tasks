@@ -25,7 +25,7 @@ public class ReservationDynamoDB {
 
         String reservationId = generateUniqueID();
         HashMap<String, AttributeValue> itemValues = new HashMap<>();
-        itemValues.put("reservationId", new AttributeValue().withS(reservationId));
+        itemValues.put("id", new AttributeValue().withS(reservationId));
         itemValues.put("tableNumber", new AttributeValue().withN(String.valueOf(tableNumber)));
         itemValues.put("clientName", new AttributeValue().withS(clientName));
         itemValues.put("phoneNumber", new AttributeValue().withS(phoneNumber));

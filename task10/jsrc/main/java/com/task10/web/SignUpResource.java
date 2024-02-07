@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class SignUpResource extends BaseResourceModel{
+public class SignUpResource extends BaseResourceModel {
 
     @Override
     public APIGatewayProxyResponseEvent execute(Map apiRequest, Map<String, String> sysEnv) {
@@ -25,9 +25,14 @@ public class SignUpResource extends BaseResourceModel{
 
         String region = sysEnv.get("region");
         CognitoService cognitoService = new CognitoServiceImpl(region);
-        cognitoService.signUp(firstName, lastName, userName, password );
-        cognitoService.listAllUsers();
-        return new APIGatewayProxyResponseEvent()
-                .withStatusCode(200);
+        try {
+            cognitoService.signUp(firstName, lastName, userName, password);
+            cognitoService.listAllUsers();
+            return new APIGatewayProxyResponseEvent()
+                    .withStatusCode(200);
+        } catch (RuntimeException e) {
+            return new APIGatewayProxyResponseEvent()
+                    .withStatusCode(400);
+        }
     }
 }

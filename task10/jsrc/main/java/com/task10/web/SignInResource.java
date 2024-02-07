@@ -22,13 +22,18 @@ public class SignInResource extends BaseResourceModel {
 
         String region = sysEnv.get("region");
         CognitoService cognitoService = new CognitoServiceImpl(region);
-        String token = cognitoService.loginUser(userName, password);
+        try {
+            String token = cognitoService.loginUser(userName, password);
 
-        Map<String, String> response = new HashMap<>();
-        response.put("accessToken", token);
+            Map<String, String> response = new HashMap<>();
+            response.put("accessToken", token);
 
-        return new APIGatewayProxyResponseEvent()
-                .withStatusCode(200)
-                .withBody(response.toString());
+            return new APIGatewayProxyResponseEvent()
+                    .withStatusCode(200)
+                    .withBody(response.toString());
+        } catch (RuntimeException e) {
+            return new APIGatewayProxyResponseEvent()
+                    .withStatusCode(400);
+        }
     }
 }

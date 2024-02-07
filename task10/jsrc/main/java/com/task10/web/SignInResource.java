@@ -25,7 +25,7 @@ public class SignInResource extends BaseResourceModel {
         System.out.println("Before get login");
 
         try {
-            String token = cognitoService.loginUser(userName, password);
+            String token = "\"" + cognitoService.loginUser(userName, password) + "\"";
 
             Map<String, String> response = new HashMap<>();
             response.put("accessToken", token);

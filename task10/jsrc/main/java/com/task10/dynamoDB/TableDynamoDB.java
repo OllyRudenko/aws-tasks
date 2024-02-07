@@ -48,8 +48,10 @@ public class TableDynamoDB {
         PutItemRequest request = new PutItemRequest()
                 .withTableName(tableName)
                 .withItem(itemValues);
+        System.out.println("PutItemRequest " + request.toString());
 
         try {
+            System.out.println("Start try clientDynamoDB.putItem(request)");
             PutItemResult response = clientDynamoDB.putItem(request);
             System.out.println(tableName + " was successfully saved. The request id is "
                     + response.getItemCollectionMetrics().toString());
@@ -60,6 +62,7 @@ public class TableDynamoDB {
         } catch (RuntimeException e) {
             System.err.println(e.getMessage());
         }
+        System.out.println("return false");
         return false;
     }
 

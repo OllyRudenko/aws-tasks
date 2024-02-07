@@ -90,6 +90,7 @@ public class TablesResource extends BaseResourceModel {
                 .save(sysEnv.get("region"), sysEnv.get("tables_table"), id, number, places, isVip, minOrder);
         Map<String, Object> response = new HashMap<>();
         response.put("id", id);
+
         if (!result) {
             return new APIGatewayProxyResponseEvent()
                     .withStatusCode(400)

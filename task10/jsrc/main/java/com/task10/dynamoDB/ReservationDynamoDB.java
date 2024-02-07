@@ -59,6 +59,9 @@ public class ReservationDynamoDB {
                 .withRegion(region).build();
 
         // Створення мапи для визначення умови фільтрації
+        Map<String, String> expressionAttributeNames = new HashMap<>();
+        expressionAttributeNames.put("#date", "date");
+
         Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
         expressionAttributeValues.put(":tableNumber", new AttributeValue().withN(String.valueOf(tableNumber)));
         expressionAttributeValues.put(":date", new AttributeValue().withS(date));
@@ -68,8 +71,9 @@ public class ReservationDynamoDB {
         // Підготовка параметрів запиту сканування
         ScanRequest scanRequest = new ScanRequest()
                 .withTableName(tableName)
-                .withFilterExpression("tableNumber = :tableNumber AND date = :date " +
+                .withFilterExpression("tableNumber = :tableNumber AND #date = :date " +
                         "AND :startTime < slotTimeEnd AND :endTime > slotTimeStart")
+                .withExpressionAttributeNames(expressionAttributeNames)
                 .withExpressionAttributeValues(expressionAttributeValues);
 
         try {
@@ -91,7 +95,7 @@ public class ReservationDynamoDB {
         AmazonDynamoDB clientDynamoDB = AmazonDynamoDBClientBuilder.standard()
                 .withRegion(region).build();
 
-        System.out.println("Hello from TableDynamoDB GET ALL!!!! " + tableName);
+        System.out.println("Hello from ReservationDynamoDB GET ALL!!!! " + tableName);
 
         ScanRequest scanRequest = new ScanRequest().withTableName(tableName);
         System.out.println("SCAN " + scanRequest.toString());
@@ -101,6 +105,7 @@ public class ReservationDynamoDB {
             // Виконую сканування таблиці та отримую відповідь
             ScanResult response = clientDynamoDB.scan(scanRequest);
             System.out.println("ALL Items reservations " + response.getItems().toString());
+
             itemList.addAll(response.getItems());
         } catch (RuntimeException e) {
             System.err.println(e.getMessage());

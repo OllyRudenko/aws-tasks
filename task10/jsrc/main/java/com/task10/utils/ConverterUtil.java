@@ -1,6 +1,8 @@
 package com.task10.utils;
 
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,5 +65,23 @@ public class ConverterUtil {
         Map<String, List> reservations = new HashMap<>();
         reservations.put("reservations", reservationList);
         return reservations;
+    }
+
+    public static String convertResponseToJson(Map<String, Object> response) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(response);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String convertResponseWithListToJson(Map<String, List> response) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(response);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

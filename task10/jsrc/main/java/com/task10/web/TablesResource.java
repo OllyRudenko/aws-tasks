@@ -52,7 +52,7 @@ public class TablesResource extends BaseResourceModel {
 
                 return new APIGatewayProxyResponseEvent()
                         .withStatusCode(200)
-                        .withBody(result.toString());
+                        .withBody(ConverterUtil.convertResponseWithListToJson(result));
             } else {
 
                 String tableId = pathParam.get("tableId");
@@ -64,7 +64,7 @@ public class TablesResource extends BaseResourceModel {
 
                 return new APIGatewayProxyResponseEvent()
                         .withStatusCode(200)
-                        .withBody(result.toString());
+                        .withBody(ConverterUtil.convertResponseToJson(result));
             }
         }
 
@@ -92,6 +92,6 @@ public class TablesResource extends BaseResourceModel {
 
         return new APIGatewayProxyResponseEvent()
                 .withStatusCode(200)
-                .withBody(response.toString());
+                .withBody(ConverterUtil.convertResponseToJson(response));
     }
 }

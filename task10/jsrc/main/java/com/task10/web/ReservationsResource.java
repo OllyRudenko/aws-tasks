@@ -48,11 +48,11 @@ public class ReservationsResource extends BaseResourceModel {
 
             return new APIGatewayProxyResponseEvent()
                     .withStatusCode(200)
-                    .withBody(ConverterUtil.convertReservationItems(result).toString());
+                    .withBody(ConverterUtil.convertResponseWithListToJson(ConverterUtil.convertReservationItems(result)));
         }
 
         return new APIGatewayProxyResponseEvent()
-                .withStatusCode(500);
+                .withStatusCode(400);
     }
 
     private APIGatewayProxyResponseEvent saveReceivedReservationToDynamoDB(Map<String, String> sysEnv,
@@ -80,6 +80,6 @@ public class ReservationsResource extends BaseResourceModel {
 
         return new APIGatewayProxyResponseEvent()
                 .withStatusCode(200)
-                .withBody(response.toString());
+                .withBody(ConverterUtil.convertResponseToJson(response));
     }
 }

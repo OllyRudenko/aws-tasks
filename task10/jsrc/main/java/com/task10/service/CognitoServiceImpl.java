@@ -4,6 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.RSAKeyProvider;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.task10.utils.CognitoUtil;
 import com.task10.utils.RSAKeyProviderTokenUtils;
 import com.google.gson.Gson;
@@ -120,7 +122,9 @@ public class CognitoServiceImpl implements CognitoService {
     }
 
     private String getUsernameFromAccessToken(String token) { //com.auth0.jwt.exceptions.TokenExpiredException com.auth0.jwt.exceptions.JWTDecodeException
-
+        System.out.println("getUsernameFromAccessToken " + token);
+        String convertedToken = convertToJson(token);
+        System.out.println("converted Token " + token);
         RSAKeyProvider keyProvider = new RSAKeyProviderTokenUtils(REGION, getUserPoolId(identityProviderClient));
         Algorithm algorithm = Algorithm.RSA256(keyProvider);
         JWTVerifier jwtVerifier = JWT.require(algorithm)
@@ -135,6 +139,14 @@ public class CognitoServiceImpl implements CognitoService {
         return (String) payloadMap.get("cognito:username");
     }
 
+    private String convertToJson(String token) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(token);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
     @Override
     public void listAllUsers() {
         try {

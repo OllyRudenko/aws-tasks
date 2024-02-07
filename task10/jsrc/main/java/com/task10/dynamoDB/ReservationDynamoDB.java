@@ -16,14 +16,15 @@ import java.util.Map;
 import java.util.UUID;
 
 public class ReservationDynamoDB {
-    public String save(String region, String tableName, Integer tableNumber,
+    public String save(String region, String reservationsTableName, String tablesTableName, Integer tableNumber,
                        String clientName, String phoneNumber, String date, String slotTimeStart, String slotTimeEnd) {
         AmazonDynamoDB clientDynamoDB = AmazonDynamoDBClientBuilder.standard()
                 .withRegion(region).build();
 
         System.out.println("Hello from ReservationDynamoDB SAVE!!!! ");
 
-        if (checkAndSave(region, tableName, tableNumber, date, slotTimeStart, slotTimeEnd)) {
+        if (isExistTable(region, tablesTableName, tableNumber)
+                && checkAndSave(region, reservationsTableName, tableNumber, date, slotTimeStart, slotTimeEnd)) {
             String reservationId = generateUniqueID();
             HashMap<String, AttributeValue> itemValues = new HashMap<>();
             itemValues.put("id", new AttributeValue().withS(reservationId));
@@ -35,16 +36,16 @@ public class ReservationDynamoDB {
             itemValues.put("slotTimeEnd", new AttributeValue().withS(slotTimeEnd));
 
             PutItemRequest request = new PutItemRequest()
-                    .withTableName(tableName)
+                    .withTableName(reservationsTableName)
                     .withItem(itemValues);
 
             try {
                 PutItemResult response = clientDynamoDB.putItem(request);
-                System.out.println(tableName + " was successfully updated. The request id is "
+                System.out.println(reservationsTableName + " was successfully updated. The request id is "
                         + response.toString());
                 return reservationId;
             } catch (ResourceNotFoundException e) {
-                System.err.format("Error: The Amazon DynamoDB table \"%s\" can't be found.\n", tableName);
+                System.err.format("Error: The Amazon DynamoDB table \"%s\" can't be found.\n", reservationsTableName);
                 System.err.println("Be sure that it exists and that you've typed its name correctly!");
             } catch (RuntimeException e) {
                 System.err.println(e.getMessage());
@@ -80,6 +81,32 @@ public class ReservationDynamoDB {
             ScanResult response = clientDynamoDB.scan(scanRequest);
 
             return response.getItems().size() == 0;
+        } catch (RuntimeException e) {
+            System.err.println(e.getMessage());
+        }
+
+        return false;
+    }
+
+    public boolean isExistTable(String region, String tableName, Integer tableNumber) {
+        // Створення клієнта DynamoDB
+        AmazonDynamoDB clientDynamoDB = AmazonDynamoDBClientBuilder.standard()
+                .withRegion(region).build();
+
+        // Створення мапи для визначення умови фільтрації
+        Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
+        expressionAttributeValues.put(":tableNumber", new AttributeValue().withN(String.valueOf(tableNumber)));
+
+        // Підготовка параметрів запиту сканування
+        ScanRequest scanRequest = new ScanRequest()
+                .withTableName(tableName)
+                .withFilterExpression("tableNumber = :tableNumber")
+                .withExpressionAttributeValues(expressionAttributeValues);
+
+        try {
+            ScanResult response = clientDynamoDB.scan(scanRequest);
+
+            return response.getItems().size() > 0;
         } catch (RuntimeException e) {
             System.err.println(e.getMessage());
         }

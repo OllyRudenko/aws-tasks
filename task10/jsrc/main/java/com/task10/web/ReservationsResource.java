@@ -69,7 +69,7 @@ public class ReservationsResource extends BaseResourceModel {
 
         ReservationDynamoDB reservationDynamoDB = new ReservationDynamoDB();
         String result = reservationDynamoDB
-                .save(sysEnv.get("region"), sysEnv.get("reservations_table"), tableNumber, clientName, phoneNumber,
+                .save(sysEnv.get("region"), sysEnv.get("reservations_table"), sysEnv.get("tables_table"), tableNumber, clientName, phoneNumber,
                         date, slotTimeStart, slotTimeEnd);
 
         Map<String, Object> response = new HashMap<>();

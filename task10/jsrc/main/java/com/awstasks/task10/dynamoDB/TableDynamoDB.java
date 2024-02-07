@@ -1,0 +1,130 @@
+package com.awstasks.task10.dynamoDB;
+
+//import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+//import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
+//import com.amazonaws.services.dynamodbv2.document.DynamoDB;
+//import com.amazonaws.services.dynamodbv2.document.Table;
+//import software.amazon.awssdk.regions.Region;
+//import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+//import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+//import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
+//import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+//import software.amazon.awssdk.services.dynamodb.model.PutItemResponse;
+//import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
+
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
+import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
+import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
+import com.amazonaws.services.dynamodbv2.model.PutItemResult;
+import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
+import com.amazonaws.services.dynamodbv2.model.ScanRequest;
+import com.amazonaws.services.dynamodbv2.model.ScanResult;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+public class TableDynamoDB {
+
+    public boolean save(String region, String tableName,
+                        Integer id, Integer number, Integer places, Boolean isVip, Integer minOrder) {
+        AmazonDynamoDB clientDynamoDB = AmazonDynamoDBClientBuilder.standard()
+                .withRegion(System.getenv("region")).build();
+
+        System.out.println("Hello from TableDynamoDB!!!! ");
+
+        HashMap<String, AttributeValue> itemValues = new HashMap<>();
+        itemValues.put("id", new AttributeValue().withN(String.valueOf(id)));
+        itemValues.put("number", new AttributeValue().withN(String.valueOf(number)));
+        itemValues.put("places", new AttributeValue().withN(String.valueOf(places)));
+        itemValues.put("isVip", new AttributeValue().withBOOL(isVip));
+        itemValues.put("minOrder", new AttributeValue().withN(String.valueOf(minOrder)));
+
+        PutItemRequest request = new PutItemRequest()
+                .withTableName(tableName)
+                .withItem(itemValues);
+
+        try {
+            PutItemResult response = clientDynamoDB.putItem(request);
+            System.out.println(tableName + " was successfully updated. The request id is "
+                    + response.toString());
+            return true;
+        } catch (ResourceNotFoundException e) {
+            System.err.format("Error: The Amazon DynamoDB table \"%s\" can't be found.\n", tableName);
+            System.err.println("Be sure that it exists and that you've typed its name correctly!");
+            System.exit(1);
+        } catch (RuntimeException e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+        return false;
+    }
+
+    public List<Map<String, AttributeValue>> getAll(String region, String tableName) {
+        AmazonDynamoDB clientDynamoDB = AmazonDynamoDBClientBuilder.standard()
+                .withRegion(System.getenv("region")).build();
+
+        System.out.println("Hello from TableDynamoDB GET ALL!!!! ");
+
+        ScanRequest scanRequest = new ScanRequest()
+                .withTableName(tableName);
+        List<Map<String, AttributeValue>> itemList = new ArrayList<>();
+
+        try {
+            // Виконуємо сканування таблиці та отримуємо відповідь
+            ScanResult response = clientDynamoDB.scan(scanRequest);
+
+            // Виводимо всі елементи
+            //                System.out.println("Item:");
+            //                for (Map.Entry<String, AttributeValue> entry : item.entrySet()) {
+            //                    System.out.println(entry.getKey() + ": " + entry.getValue());
+            //                }
+            //                System.out.println();
+            itemList.addAll(response.getItems());
+        } catch (RuntimeException e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+        return itemList;
+    }
+
+    public Map<String, AttributeValue> get(String region, String tableName, String id) {
+        System.out.println("Hello from GET by ID " + id);
+        AmazonDynamoDB clientDynamoDB = AmazonDynamoDBClientBuilder.standard()
+                .withRegion(region).build();
+
+        HashMap<String, AttributeValue> keyToGet = new HashMap<>();
+        keyToGet.put("id", new AttributeValue()
+                .withN(id));
+
+        GetItemRequest request = new GetItemRequest()
+                .withKey(keyToGet)
+                .withTableName(tableName);
+
+        Map<String, AttributeValue> returnedItem = null;
+
+        try {
+            // If there is no matching item, GetItem does not return any data.
+            returnedItem = clientDynamoDB.getItem(request).getItem();
+            if (returnedItem.isEmpty())
+                System.out.format("No item found with the key %s!\n", id);
+            else {
+                Set<String> keys = returnedItem.keySet();
+                System.out.println("Amazon DynamoDB table attributes: \n");
+                for (String key1 : keys) {
+                    System.out.format("%s: %s\n", key1, returnedItem.get(key1).toString());
+                }
+            }
+
+        } catch (RuntimeException e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+        return returnedItem;
+    }
+}

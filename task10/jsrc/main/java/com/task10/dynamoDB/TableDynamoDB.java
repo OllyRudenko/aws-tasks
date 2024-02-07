@@ -80,9 +80,9 @@ public class TableDynamoDB {
             ScanResult response = clientDynamoDB.scan(scanRequest);
 
             itemList.addAll(response.getItems());
+            System.out.println("Item List: " + itemList);
         } catch (RuntimeException e) {
             System.err.println(e.getMessage());
-            System.exit(1);
         }
         return itemList;
     }

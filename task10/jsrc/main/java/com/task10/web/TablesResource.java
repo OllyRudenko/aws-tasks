@@ -49,6 +49,7 @@ public class TablesResource extends BaseResourceModel {
                         .getAll(sysEnv.get("region"), sysEnv.get("tables_table"));
 
                 Map<String, List> result = ConverterUtil.convertItems(tables);
+                System.out.println("RESULT " + result);
 
                 return new APIGatewayProxyResponseEvent()
                         .withStatusCode(200)
@@ -61,6 +62,7 @@ public class TablesResource extends BaseResourceModel {
                         .get(sysEnv.get("region"), sysEnv.get("tables_table"), tableId);
 
                 Map<String, Object> result = ConverterUtil.convertItem(table);
+                System.out.println("RESULT " + result);
 
                 return new APIGatewayProxyResponseEvent()
                         .withStatusCode(200)

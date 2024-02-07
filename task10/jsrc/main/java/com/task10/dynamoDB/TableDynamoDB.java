@@ -34,7 +34,7 @@ public class TableDynamoDB {
     public boolean save(String region, String tableName,
                         Integer id, Integer number, Integer places, Boolean isVip, Integer minOrder) {
         AmazonDynamoDB clientDynamoDB = AmazonDynamoDBClientBuilder.standard()
-                .withRegion(System.getenv(region)).build();
+                .withRegion(region).build();
 
         System.out.println("Hello from TableDynamoDB!!!! ");
 
@@ -67,7 +67,7 @@ public class TableDynamoDB {
 
     public List<Map<String, AttributeValue>> getAll(String region, String tableName) {
         AmazonDynamoDB clientDynamoDB = AmazonDynamoDBClientBuilder.standard()
-                .withRegion(System.getenv(region)).build();
+                .withRegion(region).build();
 
         System.out.println("Hello from TableDynamoDB GET ALL!!!! ");
 

@@ -19,7 +19,7 @@ public class ReservationDynamoDB {
     public String save(String region, String tableName, Integer tableNumber,
                        String clientName, String phoneNumber, String date, String slotTimeStart, String slotTimeEnd) {
         AmazonDynamoDB clientDynamoDB = AmazonDynamoDBClientBuilder.standard()
-                .withRegion(System.getenv("region")).build();
+                .withRegion(region).build();
 
         System.out.println("Hello from ReservationDynamoDB SAVE!!!! ");
 
@@ -59,7 +59,7 @@ public class ReservationDynamoDB {
 
     public List<Map<String, AttributeValue>> getAll(String region, String tableName) {
         AmazonDynamoDB clientDynamoDB = AmazonDynamoDBClientBuilder.standard()
-                .withRegion(System.getenv("region")).build();
+                .withRegion(region).build();
 
         System.out.println("Hello from TableDynamoDB GET ALL!!!! ");
 

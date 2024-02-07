@@ -100,7 +100,7 @@ public class ReservationDynamoDB {
         try {
             // Виконую сканування таблиці та отримую відповідь
             ScanResult response = clientDynamoDB.scan(scanRequest);
-
+            System.out.println("ALL Items reservations " + response.getItems().toString());
             itemList.addAll(response.getItems());
         } catch (RuntimeException e) {
             System.err.println(e.getMessage());

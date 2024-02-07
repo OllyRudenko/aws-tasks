@@ -64,9 +64,12 @@ public class TablesResource extends BaseResourceModel {
                 Map<String, Object> result = ConverterUtil.convertItem(table);
                 System.out.println("RESULT " + result);
 
+                String response = ConverterUtil.convertResponseToJson(result);
+                System.out.println("response " + response);
+
                 return new APIGatewayProxyResponseEvent()
                         .withStatusCode(200)
-                        .withBody(ConverterUtil.convertResponseToJson(result));
+                        .withBody(response);
             }
         }
 

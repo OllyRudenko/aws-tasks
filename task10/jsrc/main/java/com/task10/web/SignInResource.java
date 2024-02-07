@@ -22,6 +22,8 @@ public class SignInResource extends BaseResourceModel {
 
         String region = sysEnv.get("region");
         CognitoService cognitoService = new CognitoServiceImpl(region);
+        System.out.println("Before get login");
+
         try {
             String token = cognitoService.loginUser(userName, password);
 

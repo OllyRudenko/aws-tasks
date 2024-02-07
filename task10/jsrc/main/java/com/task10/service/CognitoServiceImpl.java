@@ -101,7 +101,7 @@ public class CognitoServiceImpl implements CognitoService {
                         .authParameters(params)
                         .build()
         );
-
+        System.out.println("TOKEN " + authResponse.authenticationResult().idToken());
         return authResponse.authenticationResult().idToken();
     }
 

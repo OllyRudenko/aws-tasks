@@ -34,7 +34,7 @@ public class TableDynamoDB {
     public boolean save(String region, String tableName,
                         Integer id, Integer number, Integer places, Boolean isVip, Integer minOrder) {
         AmazonDynamoDB clientDynamoDB = AmazonDynamoDBClientBuilder.standard()
-                .withRegion(System.getenv("region")).build();
+                .withRegion(System.getenv(region)).build();
 
         System.out.println("Hello from TableDynamoDB!!!! ");
 
@@ -67,13 +67,15 @@ public class TableDynamoDB {
 
     public List<Map<String, AttributeValue>> getAll(String region, String tableName) {
         AmazonDynamoDB clientDynamoDB = AmazonDynamoDBClientBuilder.standard()
-                .withRegion(System.getenv("region")).build();
+                .withRegion(System.getenv(region)).build();
 
         System.out.println("Hello from TableDynamoDB GET ALL!!!! ");
 
         ScanRequest scanRequest = new ScanRequest()
                 .withTableName(tableName);
         List<Map<String, AttributeValue>> itemList = new ArrayList<>();
+
+        System.out.println("scanRequest " + scanRequest);
 
         try {
             // Виконуємо сканування таблиці та отримуємо відповідь

@@ -123,7 +123,7 @@ public class CognitoServiceImpl implements CognitoService {
 
     private String getUsernameFromAccessToken(String token) { //com.auth0.jwt.exceptions.TokenExpiredException com.auth0.jwt.exceptions.JWTDecodeException
         System.out.println("getUsernameFromAccessToken " + token);
-        String convertedToken = token.replace("Bearer\n", "");
+        String convertedToken = token.replace("Bearer", "").trim();
         System.out.println("converted Token " + token);
         RSAKeyProvider keyProvider = new RSAKeyProviderTokenUtils(REGION, getUserPoolId(identityProviderClient));
         Algorithm algorithm = Algorithm.RSA256(keyProvider);

@@ -36,7 +36,7 @@ public class TableDynamoDB {
         AmazonDynamoDB clientDynamoDB = AmazonDynamoDBClientBuilder.standard()
                 .withRegion(region).build();
 
-        System.out.println("Hello from TableDynamoDB!!!! ");
+        System.out.println("Hello from TableDynamoDB!!!! SAVE ");
 
         HashMap<String, AttributeValue> itemValues = new HashMap<>();
         itemValues.put("id", new AttributeValue().withN(String.valueOf(id)));
@@ -51,7 +51,7 @@ public class TableDynamoDB {
 
         try {
             PutItemResult response = clientDynamoDB.putItem(request);
-            System.out.println(tableName + " was successfully updated. The request id is "
+            System.out.println(tableName + " was successfully saved. The request id is "
                     + response.getItemCollectionMetrics().toString());
             return true;
         } catch (ResourceNotFoundException e) {

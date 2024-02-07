@@ -32,6 +32,8 @@ public class ReservationsResource extends BaseResourceModel {
                     .withBody("HELLO - token is NOT valid");
         }
 
+        System.out.println("METHOD " + httpMethod);
+
         if (httpMethod.equals("POST")) {
 
             String body = apiRequest.get("body").toString();

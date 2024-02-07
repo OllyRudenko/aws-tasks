@@ -35,6 +35,7 @@ public class TablesResource extends BaseResourceModel {
                     .withBody("HELLO - token is NOT valid");
         }
 
+        System.out.println("METHOD " + httpMethod);
         if (httpMethod.equals("POST")) {
             String body = apiRequest.get("body").toString();
             Gson gson = new Gson();
@@ -91,7 +92,7 @@ public class TablesResource extends BaseResourceModel {
         response.put("id", id);
         if (!result) {
             return new APIGatewayProxyResponseEvent()
-                    .withStatusCode(500)
+                    .withStatusCode(400)
                     .withBody("Object was not saved");
         }
 

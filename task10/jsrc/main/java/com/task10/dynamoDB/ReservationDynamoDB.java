@@ -79,7 +79,7 @@ public class ReservationDynamoDB {
 
         try {
             ScanResult response = clientDynamoDB.scan(scanRequest);
-
+            System.out.println("IS RESERVED TIME? (size = 0) " + response.getItems().size());
             return response.getItems().size() == 0;
         } catch (RuntimeException e) {
             System.err.println(e.getMessage());
@@ -106,6 +106,7 @@ public class ReservationDynamoDB {
         try {
             ScanResult response = clientDynamoDB.scan(scanRequest);
 
+            System.out.println("IS EXIST TABLE? (size) " + response.getItems().size());
             return response.getItems().size() > 0;
         } catch (RuntimeException e) {
             System.err.println(e.getMessage());

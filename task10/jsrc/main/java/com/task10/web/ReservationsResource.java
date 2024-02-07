@@ -46,9 +46,12 @@ public class ReservationsResource extends BaseResourceModel {
             List<Map<String, AttributeValue>> result = reservationDynamoDB.getAll(sysEnv.get("region"),
                     sysEnv.get("reservations_table"));
 
+            String response = ConverterUtil.convertResponseWithListToJson(ConverterUtil.convertReservationItems(result));
+            System.out.println("RESPONSE all reservations" + response);
+
             return new APIGatewayProxyResponseEvent()
                     .withStatusCode(200)
-                    .withBody(ConverterUtil.convertResponseWithListToJson(ConverterUtil.convertReservationItems(result)));
+                    .withBody(response);
         }
 
         return new APIGatewayProxyResponseEvent()
@@ -74,8 +77,7 @@ public class ReservationsResource extends BaseResourceModel {
 
         if (result.length() == 0) {
             return new APIGatewayProxyResponseEvent()
-                    .withStatusCode(400)
-                    .withBody("Reservation can't be created");
+                    .withStatusCode(400);
         }
 
         return new APIGatewayProxyResponseEvent()

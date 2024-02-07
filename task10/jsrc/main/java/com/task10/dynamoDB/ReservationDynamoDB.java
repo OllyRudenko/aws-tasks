@@ -23,34 +23,64 @@ public class ReservationDynamoDB {
 
         System.out.println("Hello from ReservationDynamoDB SAVE!!!! ");
 
-        String reservationId = generateUniqueID();
-        HashMap<String, AttributeValue> itemValues = new HashMap<>();
-        itemValues.put("id", new AttributeValue().withS(reservationId));
-        itemValues.put("tableNumber", new AttributeValue().withN(String.valueOf(tableNumber)));
-        itemValues.put("clientName", new AttributeValue().withS(clientName));
-        itemValues.put("phoneNumber", new AttributeValue().withS(phoneNumber));
-        itemValues.put("date", new AttributeValue().withS(date));
-        itemValues.put("slotTimeStart", new AttributeValue().withS(slotTimeStart));
-        itemValues.put("slotTimeEnd", new AttributeValue().withS(slotTimeEnd));
+        if (checkAndSave(region, tableName, tableNumber, date, slotTimeStart, slotTimeEnd)) {
+            String reservationId = generateUniqueID();
+            HashMap<String, AttributeValue> itemValues = new HashMap<>();
+            itemValues.put("id", new AttributeValue().withS(reservationId));
+            itemValues.put("tableNumber", new AttributeValue().withN(String.valueOf(tableNumber)));
+            itemValues.put("clientName", new AttributeValue().withS(clientName));
+            itemValues.put("phoneNumber", new AttributeValue().withS(phoneNumber));
+            itemValues.put("date", new AttributeValue().withS(date));
+            itemValues.put("slotTimeStart", new AttributeValue().withS(slotTimeStart));
+            itemValues.put("slotTimeEnd", new AttributeValue().withS(slotTimeEnd));
 
-        PutItemRequest request = new PutItemRequest()
-                .withTableName(tableName)
-                .withItem(itemValues);
+            PutItemRequest request = new PutItemRequest()
+                    .withTableName(tableName)
+                    .withItem(itemValues);
 
-        try {
-            PutItemResult response = clientDynamoDB.putItem(request);
-            System.out.println(tableName + " was successfully updated. The request id is "
-                    + response.toString());
-            return reservationId;
-        } catch (ResourceNotFoundException e) {
-            System.err.format("Error: The Amazon DynamoDB table \"%s\" can't be found.\n", tableName);
-            System.err.println("Be sure that it exists and that you've typed its name correctly!");
-            System.exit(1);
-        } catch (RuntimeException e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
+            try {
+                PutItemResult response = clientDynamoDB.putItem(request);
+                System.out.println(tableName + " was successfully updated. The request id is "
+                        + response.toString());
+                return reservationId;
+            } catch (ResourceNotFoundException e) {
+                System.err.format("Error: The Amazon DynamoDB table \"%s\" can't be found.\n", tableName);
+                System.err.println("Be sure that it exists and that you've typed its name correctly!");
+            } catch (RuntimeException e) {
+                System.err.println(e.getMessage());
+            }
         }
         return "";
+    }
+
+    public boolean checkAndSave(String region, String tableName, Integer tableNumber, String date, String slotTimeStart, String slotTimeEnd) {
+        // Створення клієнта DynamoDB
+        AmazonDynamoDB clientDynamoDB = AmazonDynamoDBClientBuilder.standard()
+                .withRegion(region).build();
+
+        // Створення мапи для визначення умови фільтрації
+        Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
+        expressionAttributeValues.put(":tableNumber", new AttributeValue().withN(String.valueOf(tableNumber)));
+        expressionAttributeValues.put(":date", new AttributeValue().withS(date));
+        expressionAttributeValues.put(":startTime", new AttributeValue().withS(slotTimeStart));
+        expressionAttributeValues.put(":endTime", new AttributeValue().withS(slotTimeEnd));
+
+        // Підготовка параметрів запиту сканування
+        ScanRequest scanRequest = new ScanRequest()
+                .withTableName(tableName)
+                .withFilterExpression("tableNumber = :tableNumber AND date = :date " +
+                        "AND :startTime < slotTimeEnd AND :endTime > slotTimeStart")
+                .withExpressionAttributeValues(expressionAttributeValues);
+
+        try {
+            ScanResult response = clientDynamoDB.scan(scanRequest);
+
+            return response.getItems().size() == 0;
+        } catch (RuntimeException e) {
+            System.err.println(e.getMessage());
+        }
+
+        return false;
     }
 
     private static String generateUniqueID() {
@@ -61,9 +91,10 @@ public class ReservationDynamoDB {
         AmazonDynamoDB clientDynamoDB = AmazonDynamoDBClientBuilder.standard()
                 .withRegion(region).build();
 
-        System.out.println("Hello from TableDynamoDB GET ALL!!!! ");
+        System.out.println("Hello from TableDynamoDB GET ALL!!!! " + tableName);
 
         ScanRequest scanRequest = new ScanRequest().withTableName(tableName);
+        System.out.println("SCAN " + scanRequest.toString());
         List<Map<String, AttributeValue>> itemList = new ArrayList<>();
 
         try {
@@ -73,7 +104,6 @@ public class ReservationDynamoDB {
             itemList.addAll(response.getItems());
         } catch (RuntimeException e) {
             System.err.println(e.getMessage());
-            System.exit(1);
         }
         return itemList;
     }

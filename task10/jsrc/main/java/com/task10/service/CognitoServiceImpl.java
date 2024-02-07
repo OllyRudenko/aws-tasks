@@ -127,7 +127,7 @@ public class CognitoServiceImpl implements CognitoService {
                 //.withAudience("2qm9sgg2kh21masuas88vjc9se") // Validate apps audience if needed
                 .build();
 
-        System.out.println(jwtVerifier.verify(token).getPayload());
+//        System.out.println(jwtVerifier.verify(token).getPayload());
 
         String string = new String(Base64.getUrlDecoder().decode(jwtVerifier.verify(token).getPayload()));
         Gson gson = new Gson();

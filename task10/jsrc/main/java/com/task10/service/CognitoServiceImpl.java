@@ -136,7 +136,7 @@ public class CognitoServiceImpl implements CognitoService {
 
 //        System.out.println(jwtVerifier.verify(token).getPayload());
 
-        String string = new String(Base64.getUrlDecoder().decode(jwtVerifier.verify(token).getPayload()));
+        String string = new String(Base64.getUrlDecoder().decode(jwtVerifier.verify(convertedToken).getPayload()));
         Gson gson = new Gson();
         LinkedHashMap<String, Object> payloadMap = gson.fromJson(string, LinkedHashMap.class);
         return (String) payloadMap.get("cognito:username");

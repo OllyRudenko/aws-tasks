@@ -137,7 +137,7 @@ public class CognitoServiceImpl implements CognitoService {
             // Отримати інформацію про користувача за допомогою токену доступу
             GetUserRequest getUserRequest = GetUserRequest.builder().accessToken(accessToken).build();
             GetUserResponse getUserResult = identityProviderClient.getUser(getUserRequest);
-
+            System.out.println("USER RESULT " + getUserResult.toString());
             // Перевірити, чи успішно отримано інформацію про користувача
             return getUserResult != null;
         } catch (Exception e) {

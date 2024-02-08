@@ -46,15 +46,18 @@ public class ReservationsResource extends BaseResourceModel {
         } else if (httpMethod.equals("GET")) {
 
             ReservationDynamoDB reservationDynamoDB = new ReservationDynamoDB();
-            List<Map<String, AttributeValue>> result = reservationDynamoDB.getAll(sysEnv.get("region"),
+            List<Map<String, AttributeValue>> reservations = reservationDynamoDB.getAll(sysEnv.get("region"),
                     sysEnv.get("reservations_table"));
 
-//            String response = ConverterUtil.convertResponseWithListToJson(ConverterUtil.convertReservationItems(result));
-//            System.out.println("RESPONSE all reservations" + response);
+            Map<String, List> result = ConverterUtil.convertItems(reservations);
+            System.out.println("RESULT " + result);
+
+            String response = ConverterUtil.convertResponseWithListToJson(result);
+            System.out.println("RESPONSE all reservations" + response);
 
             return new APIGatewayProxyResponseEvent()
                     .withStatusCode(200)
-                    .withBody(result.toString());
+                    .withBody(String.valueOf(result));
         }
 
         return new APIGatewayProxyResponseEvent()
@@ -85,6 +88,6 @@ public class ReservationsResource extends BaseResourceModel {
 
         return new APIGatewayProxyResponseEvent()
                 .withStatusCode(200)
-                .withBody(response.toString()); // ConverterUtil.convertResponseToJson(response)
+                .withBody(String.valueOf(response)); // ConverterUtil.convertResponseToJson(response)
     }
 }

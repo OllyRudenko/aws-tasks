@@ -1,9 +1,5 @@
 package com.task10.service;
 
-import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
-import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
-import com.amazonaws.services.cognitoidp.model.GetUserRequest;
-import com.amazonaws.services.cognitoidp.model.GetUserResult;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -15,8 +11,6 @@ import com.task10.utils.RSAKeyProviderTokenUtils;
 import com.google.gson.Gson;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.*;
-//import software.amazon.awssdk.services.cognitoidentityprovider.model.GetUserRequest;
-//import software.amazon.awssdk.services.cognitoidentityprovider.model.GetUserResponse;
 
 import java.util.Base64;
 import java.util.HashMap;
@@ -137,14 +131,12 @@ public class CognitoServiceImpl implements CognitoService {
 
     @Override
     public boolean isTokenValid(String accessToken) {
-        AWSCognitoIdentityProvider cognitoClient = AWSCognitoIdentityProviderClientBuilder.defaultClient();
+        //AWSCognitoIdentityProvider cognitoClient = AWSCognitoIdentityProviderClientBuilder.defaultClient();
 
         try {
             // Отримати інформацію про користувача за допомогою токену доступу
-//            GetUserRequest getUserRequest = GetUserRequest.builder().accessToken(accessToken).build();
-//            GetUserResponse getUserResult = identityProviderClient.getUser(getUserRequest);
-            GetUserRequest getUserRequest = new GetUserRequest().withAccessToken(accessToken);
-            GetUserResult getUserResult = cognitoClient.getUser(getUserRequest);
+            GetUserRequest getUserRequest = GetUserRequest.builder().accessToken(accessToken).build();
+            GetUserResponse getUserResult = identityProviderClient.getUser(getUserRequest);
             System.out.println("USER RESULT " + getUserResult.toString());
             // Перевірити, чи успішно отримано інформацію про користувача
             return getUserResult != null;

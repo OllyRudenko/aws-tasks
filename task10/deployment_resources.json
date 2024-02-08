@@ -164,7 +164,8 @@
           "default_error_pattern": true,
           "integration_passthrough_behavior": "WHEN_NO_TEMPLATES",
           "lambda_name": "api_handler",
-          "enable_proxy": true
+          "enable_proxy": true,
+          "api_key_required": false
         },
         "GET": {
           "integration_request_body_template": {},
@@ -176,7 +177,8 @@
           "default_error_pattern": true,
           "integration_passthrough_behavior": "WHEN_NO_TEMPLATES",
           "lambda_name": "api_handler",
-          "enable_proxy": true
+          "enable_proxy": true,
+          "api_key_required": false
         }
       },
       "/reservations": {
@@ -190,7 +192,8 @@
           "default_error_pattern": true,
           "integration_passthrough_behavior": "WHEN_NO_TEMPLATES",
           "lambda_name": "api_handler",
-          "enable_proxy": true
+          "enable_proxy": true,
+          "api_key_required": false
         },
         "GET": {
           "integration_request_body_template": {},
@@ -200,7 +203,8 @@
           "default_error_pattern": true,
           "integration_passthrough_behavior": "WHEN_NO_TEMPLATES",
           "lambda_name": "api_handler",
-          "enable_proxy": true
+          "enable_proxy": true,
+          "api_key_required": false
         }
       }
     }

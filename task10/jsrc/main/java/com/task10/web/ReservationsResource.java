@@ -2,7 +2,10 @@ package com.task10.web;
 
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.task10.dynamoDB.ReservationDynamoDB;
+import com.task10.models.Reservation;
 import com.task10.service.CognitoService;
 import com.task10.service.CognitoServiceImpl;
 import com.task10.utils.ConverterUtil;
@@ -51,7 +54,7 @@ public class ReservationsResource extends BaseResourceModel {
             List<Map<String, AttributeValue>> reservations = reservationDynamoDB.getAll(sysEnv.get("region"),
                     sysEnv.get("reservations_table"));
 
-            Map<String, List> result = ConverterUtil.convertReservationItems(reservations);
+            Map<String, List<Reservation>> result = ConverterUtil.convertReservationItems(reservations);
             System.out.println("RESULT " + result);
 
 //            String response = ConverterUtil.convertResponseWithListToJson(result);
@@ -59,11 +62,19 @@ public class ReservationsResource extends BaseResourceModel {
 
             return new APIGatewayProxyResponseEvent()
                     .withStatusCode(200)
-                    .withBody(new Gson().toJson(result.toString()));
+                    .withBody(convertToJson(result));
         }
 
         return new APIGatewayProxyResponseEvent()
                 .withStatusCode(400);
+    }
+
+    public static String convertToJson(Object object) {
+        try {
+            return new ObjectMapper().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public JSONObject convert(Map<String, List> result) {

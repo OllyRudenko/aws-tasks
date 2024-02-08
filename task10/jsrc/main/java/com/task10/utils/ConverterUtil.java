@@ -3,6 +3,8 @@ package com.task10.utils;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.task10.models.Reservation;
+import com.task10.models.Table;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -30,12 +32,29 @@ public class ConverterUtil {
         return table;
     }
 
-    public static Map<String, List> convertItems(List<Map<String, AttributeValue>> items) {
-        List<Map> tableList = new ArrayList<>();
+    public static Table convertItemToTable(Map<String, AttributeValue> item) {
+        int id = Integer.parseInt(item.get("id").getN());
+        int number = Integer.parseInt(item.get("number").getN());
+        int places = Integer.parseInt(item.get("places").getN());
+        boolean isVip = item.get("isVip").getBOOL();
+        Integer minOrder = Integer.parseInt(item.get("minOrder").getN());
+
+        Table table = new Table();
+        table.setId(id);
+        table.setNumber(number);
+        table.setPlaces(places);
+        table.setVip(isVip);
+        table.setMinOrder(minOrder);
+
+        return table;
+    }
+
+    public static Map<String, List<Table>> convertItems(List<Map<String, AttributeValue>> items) {
+        List<Table> tableList = new ArrayList<>();
         for (Map<String, AttributeValue> item : items) {
-            tableList.add(convertItem(item));
+            tableList.add(convertItemToTable(item));
         }
-        Map<String, List> tables = new HashMap<>();
+        Map<String, List<Table>> tables = new HashMap<>();
         tables.put("tables", tableList);
         return tables;
     }
@@ -59,12 +78,31 @@ public class ConverterUtil {
         return reservation;
     }
 
-    public static Map<String, List> convertReservationItems(List<Map<String, AttributeValue>> items) {
-        List<Map> reservationList = new ArrayList<>();
+    public static Reservation convertItemToReservation(Map<String, AttributeValue> item) {
+        int tableNumber = Integer.parseInt(item.get("tableNumber").getN());
+        String clientName = item.get("clientName").getS();
+        String phoneNumber = item.get("phoneNumber").getS();
+        String date = item.get("date").getS();
+        String slotTimeStart = item.get("slotTimeStart").getS();
+        String slotTimeEnd = item.get("slotTimeEnd").getS();
+
+        Reservation reservation = new Reservation();
+        reservation.setTableNumber(tableNumber);
+        reservation.setClientName(clientName);
+        reservation.setPhoneNumber(phoneNumber);
+        reservation.setDate(date);
+        reservation.setSlotTimeStart(slotTimeStart);
+        reservation.setSlotTimeEnd(slotTimeEnd);
+
+        return reservation;
+    }
+
+    public static Map<String, List<Reservation>> convertReservationItems(List<Map<String, AttributeValue>> items) {
+        List<Reservation> reservationList = new ArrayList<>();
         for (Map<String, AttributeValue> item : items) {
-            reservationList.add(convertReservationItem(item));
+            reservationList.add(convertItemToReservation(item));
         }
-        Map<String, List> reservations = new HashMap<>();
+        Map<String, List<Reservation>> reservations = new HashMap<>();
         reservations.put("reservations", reservationList);
         return reservations;
     }

@@ -2,7 +2,10 @@ package com.task10.web;
 
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.task10.dynamoDB.TableDynamoDB;
+import com.task10.models.Table;
 import com.task10.service.CognitoService;
 import com.task10.service.CognitoServiceImpl;
 import com.task10.utils.ConverterUtil;
@@ -52,12 +55,12 @@ public class TablesResource extends BaseResourceModel {
                 List<Map<String, AttributeValue>> tables = tableDynamoDB
                         .getAll(sysEnv.get("region"), sysEnv.get("tables_table"));
 
-                Map<String, List> result = ConverterUtil.convertItems(tables);
+                Map<String, List<Table>> result = ConverterUtil.convertItems(tables);
                 System.out.println("RESULT " + result);
 
                 return new APIGatewayProxyResponseEvent()
                         .withStatusCode(200)
-                        .withBody(new Gson().toJson(result.toString())); //ConverterUtil.convertResponseWithListToJson(result)
+                        .withBody(convertToJson(result)); //ConverterUtil.convertResponseWithListToJson(result)
             } else {
 
                 String tableId = pathParam.get("tableId");
@@ -79,6 +82,14 @@ public class TablesResource extends BaseResourceModel {
 
         return new APIGatewayProxyResponseEvent()
                 .withStatusCode(500);
+    }
+
+    public static String convertToJson(Object object) {
+        try {
+            return new ObjectMapper().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public JSONObject convert(Map<String, List> result) {

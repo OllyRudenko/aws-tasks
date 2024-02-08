@@ -62,7 +62,7 @@ public class ReservationsResource extends BaseResourceModel {
 
             return new APIGatewayProxyResponseEvent()
                     .withStatusCode(200)
-                    .withBody(new Gson());
+                    .withBody(String.valueOf(result));
         }
 
         return new APIGatewayProxyResponseEvent()

@@ -32,7 +32,7 @@ public class TablesResource extends BaseResourceModel {
         String region = sysEnv.get("region");
         String userPoolName = sysEnv.get("booking_userpool");
         String token = "";
-        if(Objects.isNull(pathParam.get("tableId"))){
+        if(Objects.isNull(pathParam)){
             token=authorization.replace("Bearer", "").trim();
         }else{
             token = authorization;

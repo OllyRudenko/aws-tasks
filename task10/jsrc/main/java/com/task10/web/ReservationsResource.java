@@ -24,20 +24,20 @@ public class ReservationsResource extends BaseResourceModel {
         LinkedHashMap<String, String> headers = (LinkedHashMap<String, String>) apiRequest.get("headers");
         String httpMethod = (String) apiRequest.get("httpMethod");
 
-        String token = headers.get("Authorization");
-        String region = sysEnv.get("region");
-        String userPoolName = sysEnv.get("booking_userpool");
-        CognitoService cognitoService = new CognitoServiceImpl(region, userPoolName);
+//        String token = headers.get("Authorization");
+//        String region = sysEnv.get("region");
+//        String userPoolName = sysEnv.get("booking_userpool");
+//        CognitoService cognitoService = new CognitoServiceImpl(region, userPoolName);
 
-        if (cognitoService.isValidIdToken(token)) {
-            // if (cognitoService.isTokenValid(token)) {
-            System.out.println("HELLO - token is valid");
-        } else {
-            System.out.println("HELLO - token is NOT valid");
-            return new APIGatewayProxyResponseEvent()
-                    .withStatusCode(401)
-                    .withBody("HELLO - token is NOT valid");
-        }
+//        if (cognitoService.isValidIdToken(token)) {
+//            // if (cognitoService.isTokenValid(token)) {
+//            System.out.println("HELLO - token is valid");
+//        } else {
+//            System.out.println("HELLO - token is NOT valid");
+//            return new APIGatewayProxyResponseEvent()
+//                    .withStatusCode(401)
+//                    .withBody("HELLO - token is NOT valid");
+//        }
 
         System.out.println("METHOD " + httpMethod);
 

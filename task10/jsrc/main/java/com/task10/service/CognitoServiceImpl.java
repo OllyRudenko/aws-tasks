@@ -33,9 +33,11 @@ import java.util.Map;
 public class CognitoServiceImpl implements CognitoService {
     private final CognitoIdentityProviderClient identityProviderClient;
     private static String REGION;
+    private static String USER_POOL_NAME;
 
-    public CognitoServiceImpl(String region) {
+    public CognitoServiceImpl(String region, String userPoolName) {
         REGION = region;
+        USER_POOL_NAME = userPoolName;
         this.identityProviderClient = getCognitoIdentityProviderClient(region);
     }
 
@@ -169,7 +171,7 @@ public class CognitoServiceImpl implements CognitoService {
 
 
     private String getUserPoolId(CognitoIdentityProviderClient identityProviderClient) {
-        return CognitoUtil.getUserPoolId(identityProviderClient);
+        return CognitoUtil.getUserPoolId(identityProviderClient, USER_POOL_NAME);
     }
 
     private String getClientId(CognitoIdentityProviderClient identityProviderClient) {

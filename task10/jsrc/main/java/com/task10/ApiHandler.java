@@ -18,7 +18,8 @@ import java.util.Map;
 @EnvironmentVariables(value = {
         @EnvironmentVariable(key = "region", value = "${region}"),
         @EnvironmentVariable(key = "tables_table", value = "${tables_table}"),
-        @EnvironmentVariable(key = "reservations_table", value = "${reservations_table}")
+        @EnvironmentVariable(key = "reservations_table", value = "${reservations_table}"),
+        @EnvironmentVariable(key = "booking_userpool", value = "${booking_userpool}")
 })
 public class ApiHandler implements RequestHandler<Object, APIGatewayProxyResponseEvent> {
 
@@ -27,6 +28,7 @@ public class ApiHandler implements RequestHandler<Object, APIGatewayProxyRespons
         sysEnv.put("region", System.getenv("region"));
         sysEnv.put("tables_table", System.getenv("tables_table"));
         sysEnv.put("reservations_table", System.getenv("reservations_table"));
+        sysEnv.put("booking_userpool", System.getenv("booking_userpool"));
 
         System.out.println("Hello from lambda COGNITO");
         LinkedHashMap apiRequest = (LinkedHashMap) request;

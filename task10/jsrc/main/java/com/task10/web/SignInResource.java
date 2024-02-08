@@ -23,7 +23,8 @@ public class SignInResource extends BaseResourceModel {
         String password = (String) parsedBody.get("password");
 
         String region = sysEnv.get("region");
-        CognitoService cognitoService = new CognitoServiceImpl(region);
+        String userPoolName = sysEnv.get("booking_userpool");
+        CognitoService cognitoService = new CognitoServiceImpl(region, userPoolName);
         System.out.println("Before get login");
 
         try {

@@ -25,7 +25,8 @@ public class TablesResource extends BaseResourceModel {
 
         String token = headers.get("Authorization");
         String region = sysEnv.get("region");
-        CognitoService cognitoService = new CognitoServiceImpl(region);
+        String userPoolName = sysEnv.get("booking_userpool");
+        CognitoService cognitoService = new CognitoServiceImpl(region, userPoolName);
         if (cognitoService.isValidIdToken(token)) {
             System.out.println("HELLO - token is valid");
         } else {

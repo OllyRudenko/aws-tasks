@@ -24,7 +24,8 @@ public class SignUpResource extends BaseResourceModel {
         String password = (String) parsedBody.get("password");
 
         String region = sysEnv.get("region");
-        CognitoService cognitoService = new CognitoServiceImpl(region);
+        String userPoolName = sysEnv.get("booking_userpool");
+        CognitoService cognitoService = new CognitoServiceImpl(region, userPoolName);
         try {
             cognitoService.signUp(firstName, lastName, userName, password);
             cognitoService.listAllUsers();

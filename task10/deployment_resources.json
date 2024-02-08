@@ -66,7 +66,7 @@
     "global_indexes": [],
     "autoscaling": []
   },
-  "simple-booking-userpool": {
+  "${booking_userpool}": {
     "resource_type": "cognito_idp",
     "auth_role": "api_handler-role",
     "password_policy": {

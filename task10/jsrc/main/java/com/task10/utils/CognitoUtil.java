@@ -13,7 +13,7 @@ import software.amazon.awssdk.services.cognitoidentityprovider.model.UserPoolDes
 
 public class CognitoUtil {
 
-    public static String getUserPoolId(CognitoIdentityProviderClient client) {
+    public static String getUserPoolId(CognitoIdentityProviderClient client, String userPoolName) {
         ListUserPoolsRequest request = ListUserPoolsRequest.builder()
                 .maxResults(10)
                 .build();
@@ -24,8 +24,12 @@ public class CognitoUtil {
         if (userPools.isEmpty()) {
             throw new RuntimeException("No user pools found");
         }
-        UserPoolDescriptionType userPool = userPools.get(0);
+        UserPoolDescriptionType userPool = getByName(userPools, userPoolName);
         return userPool.id();
+    }
+
+    private static UserPoolDescriptionType getByName(List<UserPoolDescriptionType> userPools, String nameUserPool){
+        return userPools.stream().filter(userPool -> (userPool.name()).equals(nameUserPool)).findFirst().get();
     }
 
     public static String getClientId(CognitoIdentityProviderClient client, String userPoolId) {

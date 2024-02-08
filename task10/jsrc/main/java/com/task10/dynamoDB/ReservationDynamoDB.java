@@ -5,6 +5,8 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
 import com.amazonaws.services.dynamodbv2.model.PutItemResult;
+import com.amazonaws.services.dynamodbv2.model.QueryRequest;
+import com.amazonaws.services.dynamodbv2.model.QueryResult;
 import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
@@ -24,7 +26,8 @@ public class ReservationDynamoDB {
         System.out.println("Hello from ReservationDynamoDB SAVE!!!! ");
 
         if (isExistTable(region, tablesTableName, tableNumber)
-                && checkAndSave(region, reservationsTableName, tableNumber, date, slotTimeStart, slotTimeEnd)) {
+                &&
+                checkAndSave(region, reservationsTableName, tableNumber, date, slotTimeStart, slotTimeEnd)) {
             String reservationId = generateUniqueID();
             HashMap<String, AttributeValue> itemValues = new HashMap<>();
             itemValues.put("id", new AttributeValue().withS(reservationId));
@@ -41,13 +44,14 @@ public class ReservationDynamoDB {
 
             try {
                 PutItemResult response = clientDynamoDB.putItem(request);
-                System.out.println(reservationsTableName + " was successfully updated. The request id is "
-                        + response.toString());
+                System.out.println("RESPONSE " + response.toString());
+                System.out.println(reservationsTableName + " was successfully saved");
                 return reservationId;
             } catch (ResourceNotFoundException e) {
                 System.err.format("Error: The Amazon DynamoDB table \"%s\" can't be found.\n", reservationsTableName);
                 System.err.println("Be sure that it exists and that you've typed its name correctly!");
             } catch (RuntimeException e) {
+                e.printStackTrace(System.out);
                 System.err.println(e.getMessage());
             }
         }
@@ -88,26 +92,33 @@ public class ReservationDynamoDB {
         return false;
     }
 
-    public boolean isExistTable(String region, String tableName, Integer tableNumber) {
-        // Створення клієнта DynamoDB
+    public boolean isExistTable(String region, String tablesTableName, Integer tableNumber) {
         AmazonDynamoDB clientDynamoDB = AmazonDynamoDBClientBuilder.standard()
                 .withRegion(region).build();
 
         // Створення мапи для визначення умови фільтрації
+        Map<String, String> expressionAttributeNames = new HashMap<>();
+        expressionAttributeNames.put("#number", "number");
+
         Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
-        expressionAttributeValues.put(":tableNumber", new AttributeValue().withN(String.valueOf(tableNumber)));
+        expressionAttributeValues.put(":number", new AttributeValue().withN(String.valueOf(tableNumber)));
 
         // Підготовка параметрів запиту сканування
+        String filterExpression = "#number = :number";
+
         ScanRequest scanRequest = new ScanRequest()
-                .withTableName(tableName)
-                .withFilterExpression("tableNumber = :tableNumber")
+                .withTableName(tablesTableName)
+                .withFilterExpression(filterExpression)
+                .withExpressionAttributeNames(expressionAttributeNames)
                 .withExpressionAttributeValues(expressionAttributeValues);
+        System.out.println("Scan Request " + scanRequest);
 
         try {
             ScanResult response = clientDynamoDB.scan(scanRequest);
+            System.out.println("RESPONSE " + response.getItems());
 
             System.out.println("IS EXIST TABLE? (size) " + response.getItems().size());
-            return response.getItems().size() > 0;
+            return !response.getItems().isEmpty();
         } catch (RuntimeException e) {
             System.err.println(e.getMessage());
         }

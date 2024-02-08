@@ -125,6 +125,7 @@ public class CognitoServiceImpl implements CognitoService {
         System.out.println("getUsernameFromAccessToken " + token);
         String convertedToken = token.replace("Bearer", "").trim();
         System.out.println("converted Token " + token);
+
         RSAKeyProvider keyProvider = new RSAKeyProviderTokenUtils(REGION, getUserPoolId(identityProviderClient));
         Algorithm algorithm = Algorithm.RSA256(keyProvider);
         JWTVerifier jwtVerifier = JWT.require(algorithm)

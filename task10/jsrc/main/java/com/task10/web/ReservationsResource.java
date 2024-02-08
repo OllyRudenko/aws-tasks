@@ -108,7 +108,7 @@ public class ReservationsResource extends BaseResourceModel {
                         date, slotTimeStart, slotTimeEnd);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("id", result);
+        response.put("reservationId", result);
 
         if (result.length() == 0) {
             return new APIGatewayProxyResponseEvent()

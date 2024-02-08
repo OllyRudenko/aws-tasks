@@ -60,7 +60,7 @@ public class TablesResource extends BaseResourceModel {
 
                 return new APIGatewayProxyResponseEvent()
                         .withStatusCode(200)
-                        .withBody(convertToJson(result)); //ConverterUtil.convertResponseWithListToJson(result)
+                        .withBody(new Gson().toJson(result));  //ConverterUtil.convertResponseWithListToJson(result)
             } else {
 
                 String tableId = pathParam.get("tableId");
@@ -68,15 +68,16 @@ public class TablesResource extends BaseResourceModel {
                 Map<String, AttributeValue> table = tableDynamoDB
                         .get(sysEnv.get("region"), sysEnv.get("tables_table"), tableId);
 
-                Map<String, Object> result = ConverterUtil.convertItem(table);
+                // Map<String, Object> result = ConverterUtil.convertItem(table);
+                Table result = ConverterUtil.convertItemToTable(table);
                 System.out.println("RESULT " + result);
 
-                String response = ConverterUtil.convertResponseToJson(result);
-                System.out.println("response " + response);
+//                String response = ConverterUtil.convertResponseToJson(result);
+//                System.out.println("response " + response);
 
                 return new APIGatewayProxyResponseEvent()
                         .withStatusCode(200)
-                        .withBody(response);
+                        .withBody(convertToJson(result));
             }
         }
 

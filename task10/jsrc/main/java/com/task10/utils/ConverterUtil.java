@@ -49,12 +49,12 @@ public class ConverterUtil {
         return table;
     }
 
-    public static Map<String, List<Table>> convertItems(List<Map<String, AttributeValue>> items) {
-        List<Table> tableList = new ArrayList<>();
+    public static Map<String, List<Map<String, Object>>> convertItems(List<Map<String, AttributeValue>> items) {
+        List<Map<String, Object>> tableList = new ArrayList<>();
         for (Map<String, AttributeValue> item : items) {
-            tableList.add(convertItemToTable(item));
+            tableList.add(convertItem(item));
         }
-        Map<String, List<Table>> tables = new HashMap<>();
+        Map<String, List<Map<String, Object>>> tables = new HashMap<>();
         tables.put("tables", tableList);
         return tables;
     }
@@ -97,12 +97,12 @@ public class ConverterUtil {
         return reservation;
     }
 
-    public static Map<String, List<Reservation>> convertReservationItems(List<Map<String, AttributeValue>> items) {
-        List<Reservation> reservationList = new ArrayList<>();
+    public static Map<String, List<Map<String, Object>>> convertReservationItems(List<Map<String, AttributeValue>> items) {
+        List<Map<String, Object>> reservationList = new ArrayList<>();
         for (Map<String, AttributeValue> item : items) {
-            reservationList.add(convertItemToReservation(item));
+            reservationList.add(convertItem(item));
         }
-        Map<String, List<Reservation>> reservations = new HashMap<>();
+        Map<String, List<Map<String, Object>>> reservations = new HashMap<>();
         reservations.put("reservations", reservationList);
         return reservations;
     }

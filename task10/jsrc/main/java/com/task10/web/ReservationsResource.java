@@ -54,7 +54,7 @@ public class ReservationsResource extends BaseResourceModel {
             List<Map<String, AttributeValue>> reservations = reservationDynamoDB.getAll(sysEnv.get("region"),
                     sysEnv.get("reservations_table"));
 
-            Map<String, List<Reservation>> result = ConverterUtil.convertReservationItems(reservations);
+            Map<String, List<Map<String, Object>>> result = ConverterUtil.convertReservationItems(reservations);
             System.out.println("RESULT " + result);
 
 //            String response = ConverterUtil.convertResponseWithListToJson(result);
@@ -62,7 +62,7 @@ public class ReservationsResource extends BaseResourceModel {
 
             return new APIGatewayProxyResponseEvent()
                     .withStatusCode(200)
-                    .withBody(String.valueOf(result));
+                    .withBody(convertToJson(result));
         }
 
         return new APIGatewayProxyResponseEvent()

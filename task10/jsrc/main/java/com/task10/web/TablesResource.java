@@ -57,7 +57,7 @@ public class TablesResource extends BaseResourceModel {
 
                 return new APIGatewayProxyResponseEvent()
                         .withStatusCode(200)
-                        .withBody(convert(result).toString()); //ConverterUtil.convertResponseWithListToJson(result)
+                        .withBody(new Gson().toJson(result)); //ConverterUtil.convertResponseWithListToJson(result)
             } else {
 
                 String tableId = pathParam.get("tableId");

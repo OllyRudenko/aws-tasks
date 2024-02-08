@@ -28,15 +28,9 @@ public class TablesResource extends BaseResourceModel {
 
         String httpMethod = (String) apiRequest.get("httpMethod");
 
-        String authorization = headers.get("Authorization");
+        String token = headers.get("Authorization");
         String region = sysEnv.get("region");
         String userPoolName = sysEnv.get("booking_userpool");
-        String token = "";
-        if(Objects.isNull(pathParam)){
-            token=authorization.replace("Bearer", "").trim();
-        }else{
-            token = authorization;
-        }
         CognitoService cognitoService = new CognitoServiceImpl(region, userPoolName);
         if (cognitoService.isValidIdToken(token)) {
 //        if (cognitoService.isTokenValid(token)) {

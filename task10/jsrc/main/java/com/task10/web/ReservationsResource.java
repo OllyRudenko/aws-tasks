@@ -24,11 +24,11 @@ public class ReservationsResource extends BaseResourceModel {
         LinkedHashMap<String, String> headers = (LinkedHashMap<String, String>) apiRequest.get("headers");
         String httpMethod = (String) apiRequest.get("httpMethod");
 
-        String authorization = headers.get("Authorization");
+        String token = headers.get("Authorization");
         String region = sysEnv.get("region");
         String userPoolName = sysEnv.get("booking_userpool");
         CognitoService cognitoService = new CognitoServiceImpl(region, userPoolName);
-        String token=authorization.replace("Bearer", "").trim();
+
         if (cognitoService.isValidIdToken(token)) {
             // if (cognitoService.isTokenValid(token)) {
             System.out.println("HELLO - token is valid");

@@ -112,8 +112,8 @@ public class CognitoServiceImpl implements CognitoService {
 
     private String getUsernameFromAccessToken(String token) { //com.auth0.jwt.exceptions.TokenExpiredException com.auth0.jwt.exceptions.JWTDecodeException
         System.out.println("getUsernameFromAccessToken " + token);
-        //String convertedToken = token.replace("Bearer", "").trim();
-        ///System.out.println("converted Token " + token);
+        String convertedToken = token.replace("Bearer", "").trim();
+        System.out.println("converted Token " + token);
 
         RSAKeyProvider keyProvider = new RSAKeyProviderTokenUtils(REGION, getUserPoolId(identityProviderClient));
         Algorithm algorithm = Algorithm.RSA256(keyProvider);
@@ -123,7 +123,7 @@ public class CognitoServiceImpl implements CognitoService {
 
 //        System.out.println(jwtVerifier.verify(token).getPayload());
 
-        String string = new String(Base64.getUrlDecoder().decode(jwtVerifier.verify(token).getPayload()));
+        String string = new String(Base64.getUrlDecoder().decode(jwtVerifier.verify(convertedToken).getPayload()));
         Gson gson = new Gson();
         LinkedHashMap<String, Object> payloadMap = gson.fromJson(string, LinkedHashMap.class);
         return (String) payloadMap.get("cognito:username");

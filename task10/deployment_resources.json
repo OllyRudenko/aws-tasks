@@ -173,9 +173,6 @@
           "integration_request_body_template": {},
           "authorization_type": "authorizer",
           "integration_type": "lambda",
-          "method_request_parameters": {
-            "method.request.path.tableId": false
-          },
           "default_error_pattern": true,
           "integration_passthrough_behavior": "WHEN_NO_TEMPLATES",
           "lambda_name": "api_handler",

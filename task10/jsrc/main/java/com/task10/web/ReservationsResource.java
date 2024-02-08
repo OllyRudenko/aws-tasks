@@ -117,6 +117,6 @@ public class ReservationsResource extends BaseResourceModel {
 
         return new APIGatewayProxyResponseEvent()
                 .withStatusCode(200)
-                .withBody(String.valueOf(response)); // ConverterUtil.convertResponseToJson(response)
+                .withBody(new Gson().toJson(response)); // ConverterUtil.convertResponseToJson(response)
     }
 }

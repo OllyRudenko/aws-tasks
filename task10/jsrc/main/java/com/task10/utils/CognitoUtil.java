@@ -1,7 +1,5 @@
 package com.task10.utils;
 
-import java.util.List;
-
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.ListUserPoolClientsRequest;
@@ -10,6 +8,8 @@ import software.amazon.awssdk.services.cognitoidentityprovider.model.ListUserPoo
 import software.amazon.awssdk.services.cognitoidentityprovider.model.ListUserPoolsResponse;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.UserPoolClientDescription;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.UserPoolDescriptionType;
+
+import java.util.List;
 
 public class CognitoUtil {
 
@@ -28,7 +28,7 @@ public class CognitoUtil {
         return userPool.id();
     }
 
-    private static UserPoolDescriptionType getByName(List<UserPoolDescriptionType> userPools, String nameUserPool){
+    private static UserPoolDescriptionType getByName(List<UserPoolDescriptionType> userPools, String nameUserPool) {
         return userPools.stream().filter(userPool -> (userPool.name()).equals(nameUserPool)).findFirst().get();
     }
 

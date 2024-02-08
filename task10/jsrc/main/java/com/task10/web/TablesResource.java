@@ -7,6 +7,8 @@ import com.task10.service.CognitoService;
 import com.task10.service.CognitoServiceImpl;
 import com.task10.utils.ConverterUtil;
 import com.google.gson.Gson;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -55,7 +57,7 @@ public class TablesResource extends BaseResourceModel {
 
                 return new APIGatewayProxyResponseEvent()
                         .withStatusCode(200)
-                        .withBody(result.toString()); //ConverterUtil.convertResponseWithListToJson(result)
+                        .withBody(String.valueOf(result)); //ConverterUtil.convertResponseWithListToJson(result)
             } else {
 
                 String tableId = pathParam.get("tableId");
@@ -66,12 +68,12 @@ public class TablesResource extends BaseResourceModel {
                 Map<String, Object> result = ConverterUtil.convertItem(table);
                 System.out.println("RESULT " + result);
 
-//                String response = ConverterUtil.convertResponseToJson(result);
-//                System.out.println("response " + response);
+                String response = ConverterUtil.convertResponseToJson(result);
+                System.out.println("response " + response);
 
                 return new APIGatewayProxyResponseEvent()
                         .withStatusCode(200)
-                        .withBody(result.toString());
+                        .withBody(response);
             }
         }
 
@@ -100,6 +102,6 @@ public class TablesResource extends BaseResourceModel {
 
         return new APIGatewayProxyResponseEvent()
                 .withStatusCode(200)
-                .withBody(response.toString()); //ConverterUtil.convertResponseToJson(response)
+                .withBody(ConverterUtil.convertResponseToJson(response)); //
     }
 }

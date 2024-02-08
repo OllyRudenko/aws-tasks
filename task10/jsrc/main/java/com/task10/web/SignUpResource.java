@@ -1,9 +1,9 @@
 package com.task10.web;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
+import com.google.gson.Gson;
 import com.task10.service.CognitoService;
 import com.task10.service.CognitoServiceImpl;
-import com.google.gson.Gson;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

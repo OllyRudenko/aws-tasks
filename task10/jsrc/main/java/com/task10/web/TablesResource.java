@@ -57,7 +57,7 @@ public class TablesResource extends BaseResourceModel {
 
                 return new APIGatewayProxyResponseEvent()
                         .withStatusCode(200)
-                        .withBody(String.valueOf(result)); //ConverterUtil.convertResponseWithListToJson(result)
+                        .withBody(convert(result).toString()); //ConverterUtil.convertResponseWithListToJson(result)
             } else {
 
                 String tableId = pathParam.get("tableId");
@@ -79,6 +79,22 @@ public class TablesResource extends BaseResourceModel {
 
         return new APIGatewayProxyResponseEvent()
                 .withStatusCode(500);
+    }
+
+    public JSONObject convert(Map<String, List> result) {
+        JSONObject jsonResult = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        List<Map<String, Object>> tables = result.get("tables");
+
+        for (Map<String, Object> table : tables) {
+            JSONObject jsonTable = new JSONObject(table);
+            jsonArray.add(jsonTable);
+        }
+
+        jsonResult.put("tables", jsonArray);
+
+        System.out.println(jsonResult.toString());
+        return jsonResult;
     }
 
     private APIGatewayProxyResponseEvent saveReceivedTableToDynamoDB(Map<String, String> sysEnv, LinkedHashMap<String, Object> parsedBody) {

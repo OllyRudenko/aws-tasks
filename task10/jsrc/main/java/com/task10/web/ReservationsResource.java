@@ -7,6 +7,8 @@ import com.task10.service.CognitoService;
 import com.task10.service.CognitoServiceImpl;
 import com.task10.utils.ConverterUtil;
 import com.google.gson.Gson;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -52,16 +54,32 @@ public class ReservationsResource extends BaseResourceModel {
             Map<String, List> result = ConverterUtil.convertItems(reservations);
             System.out.println("RESULT " + result);
 
-            String response = ConverterUtil.convertResponseWithListToJson(result);
-            System.out.println("RESPONSE all reservations" + response);
+//            String response = ConverterUtil.convertResponseWithListToJson(result);
+//            System.out.println("RESPONSE all reservations" + response);
 
             return new APIGatewayProxyResponseEvent()
                     .withStatusCode(200)
-                    .withBody(String.valueOf(result));
+                    .withBody(convert(result).toString());
         }
 
         return new APIGatewayProxyResponseEvent()
                 .withStatusCode(400);
+    }
+
+    public JSONObject convert(Map<String, List> result) {
+        JSONObject jsonResult = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        List<Map<String, Object>> tables = result.get("tables");
+
+        for (Map<String, Object> table : tables) {
+            JSONObject jsonTable = new JSONObject(table);
+            jsonArray.add(jsonTable);
+        }
+
+        jsonResult.put("tables", jsonArray);
+
+        System.out.println(jsonResult.toString());
+        return jsonResult;
     }
 
     private APIGatewayProxyResponseEvent saveReceivedReservationToDynamoDB(Map<String, String> sysEnv,

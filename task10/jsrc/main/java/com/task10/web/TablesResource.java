@@ -55,12 +55,12 @@ public class TablesResource extends BaseResourceModel {
                 List<Map<String, AttributeValue>> tables = tableDynamoDB
                         .getAll(sysEnv.get("region"), sysEnv.get("tables_table"));
 
-                Map<String, List<Map<String, Object>>> result = ConverterUtil.convertItems(tables);
+                Map<String, List<Table>> result = ConverterUtil.convertItems(tables);
                 System.out.println("RESULT " + result);
 
                 return new APIGatewayProxyResponseEvent()
                         .withStatusCode(200)
-                        .withBody(convertToJson(result));  //ConverterUtil.convertResponseWithListToJson(result)
+                        .withBody(new Gson().toJson(result));  //ConverterUtil.convertResponseWithListToJson(result)
             } else {
 
                 String tableId = pathParam.get("tableId");

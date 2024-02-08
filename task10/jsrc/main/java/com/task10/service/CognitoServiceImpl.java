@@ -10,20 +10,7 @@ import com.task10.utils.CognitoUtil;
 import com.task10.utils.RSAKeyProviderTokenUtils;
 import com.google.gson.Gson;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminCreateUserRequest;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminCreateUserResponse;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminGetUserRequest;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminGetUserResponse;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminInitiateAuthRequest;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminInitiateAuthResponse;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminSetUserPasswordRequest;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminUpdateUserAttributesRequest;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.AttributeType;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.AuthFlowType;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.CognitoIdentityProviderException;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.ListUsersRequest;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.ListUsersResponse;
-import software.amazon.awssdk.services.cognitoidentityprovider.model.MessageActionType;
+import software.amazon.awssdk.services.cognitoidentityprovider.model.*;
 
 import java.util.Base64;
 import java.util.HashMap;
@@ -142,6 +129,24 @@ public class CognitoServiceImpl implements CognitoService {
         return (String) payloadMap.get("cognito:username");
     }
 
+    @Override
+    public boolean isTokenValid(String accessToken) {
+        //AWSCognitoIdentityProvider cognitoClient = AWSCognitoIdentityProviderClientBuilder.defaultClient();
+
+        try {
+            // Отримати інформацію про користувача за допомогою токену доступу
+            GetUserRequest getUserRequest = GetUserRequest.builder().accessToken(accessToken).build();
+            GetUserResponse getUserResult = identityProviderClient.getUser(getUserRequest);
+
+            // Перевірити, чи успішно отримано інформацію про користувача
+            return getUserResult != null;
+        } catch (Exception e) {
+            // Обробити помилку, якщо отримання інформації про користувача не вдалося
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private String convertToJson(String token) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -150,6 +155,7 @@ public class CognitoServiceImpl implements CognitoService {
             throw new RuntimeException(e);
         }
     }
+
     @Override
     public void listAllUsers() {
         try {

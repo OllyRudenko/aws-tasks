@@ -16,5 +16,7 @@ public interface CognitoService {
 
     boolean isValidIdToken(String accessToken);
 
+    boolean isTokenValid(String accessToken);
+
     void listAllUsers();
 }

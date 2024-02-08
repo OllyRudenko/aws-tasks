@@ -108,6 +108,16 @@
   "task10_api": {
     "resource_type": "api_gateway",
     "deploy_stage": "api",
+    "authorizers": {
+      "authorizer": {
+        "type": "COGNITO_USER_POOLS",
+        "identity_source": "method.request.header.Authorization",
+        "user_pools": [
+          "simple-booking-userpool"
+        ],
+        "ttl": 300
+      }
+    },
     "dependencies": [
       {
         "resource_name": "api_handler",
@@ -148,7 +158,7 @@
           "integration_request_body_template": {
             "application/json": ".."
           },
-          "authorization_type": "NONE",
+          "authorization_type": "authorizer",
           "integration_type": "lambda",
           "method_request_parameters": {},
           "default_error_pattern": true,
@@ -158,7 +168,7 @@
         },
         "GET": {
           "integration_request_body_template": {},
-          "authorization_type": "NONE",
+          "authorization_type": "authorizer",
           "integration_type": "lambda",
           "method_request_parameters": {
             "method.request.path.tableId": false
@@ -174,7 +184,7 @@
           "integration_request_body_template": {
             "application/json": ".."
           },
-          "authorization_type": "NONE",
+          "authorization_type": "authorizer",
           "integration_type": "lambda",
           "method_request_parameters": {},
           "default_error_pattern": true,
@@ -184,7 +194,7 @@
         },
         "GET": {
           "integration_request_body_template": {},
-          "authorization_type": "NONE",
+          "authorization_type": "authorizer",
           "integration_type": "lambda",
           "method_request_parameters": {},
           "default_error_pattern": true,

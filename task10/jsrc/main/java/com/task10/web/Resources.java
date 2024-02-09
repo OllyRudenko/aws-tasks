@@ -25,7 +25,7 @@ public class Resources {
             System.out.println("Hello from resource.equalsIgnoreCase(TABLES) " + resource);
             return new TablesResource().execute(apiRequest, sysEnv);
         }else if (resource.startsWith(TABLES) && resource.length() > TABLES.length() ) {
-
+            System.out.println("Hello from resource.equalsIgnoreCase(TABLES/TABLE_ID) " + resource);
             return new TableIdResource().execute(apiRequest, sysEnv);
         }else if (resource.equalsIgnoreCase(RESERVATIONS)){
             System.out.println("Hello from resource.equalsIgnoreCase(RESERVATIONS) " + resource);

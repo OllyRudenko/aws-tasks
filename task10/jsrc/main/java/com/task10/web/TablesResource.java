@@ -50,7 +50,6 @@ public class TablesResource extends BaseResourceModel {
 
             return saveReceivedTableToDynamoDB(sysEnv, parsedBody);
         } else if (httpMethod.equals("GET")) {
-            if (Objects.isNull(pathParam)) {
 
                 TableDynamoDB tableDynamoDB = new TableDynamoDB();
                 List<Map<String, AttributeValue>> tables = tableDynamoDB
@@ -61,37 +60,11 @@ public class TablesResource extends BaseResourceModel {
 
                 return new APIGatewayProxyResponseEvent()
                         .withStatusCode(200)
-                        .withBody(new Gson().toJson(result));  //ConverterUtil.convertResponseWithListToJson(result)
-            } else {
-
-                String tableId = pathParam.get("tableId");
-                TableDynamoDB tableDynamoDB = new TableDynamoDB();
-                Map<String, AttributeValue> table = tableDynamoDB
-                        .get(sysEnv.get("region"), sysEnv.get("tables_table"), tableId);
-
-                // Map<String, Object> result = ConverterUtil.convertItem(table);
-                Table result = ConverterUtil.convertItemToTable(table);
-                System.out.println("RESULT " + result);
-
-//                String response = ConverterUtil.convertResponseToJson(result);
-//                System.out.println("response " + response);
-
-                return new APIGatewayProxyResponseEvent()
-                        .withStatusCode(200)
-                        .withBody(convertToJson(result));
-            }
+                        .withBody(new Gson().toJson(result));
         }
 
         return new APIGatewayProxyResponseEvent()
                 .withStatusCode(500);
-    }
-
-    public static String convertToJson(Object object) {
-        try {
-            return new ObjectMapper().writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            throw new IllegalStateException(e);
-        }
     }
 
     public JSONObject convert(Map<String, List> result) {

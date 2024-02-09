@@ -20,13 +20,11 @@ import java.util.Objects;
 public class TableIdResource extends BaseResourceModel {
     @Override
     public APIGatewayProxyResponseEvent execute(Map apiRequest, Map<String, String> sysEnv) {
-        LinkedHashMap<String, String> pathParam = (LinkedHashMap<String, String>) apiRequest.get("queryStringParameters");
-
         String httpMethod = (String) apiRequest.get("httpMethod");
 
         System.out.println("METHOD " + httpMethod);
         if (httpMethod.equals("GET")) {
-            String tableId = apiRequest.get("path").toString().substring("/api/tables/".length());
+            String tableId = apiRequest.get("resource").toString().substring("/api/tables/".length());
 
                 TableDynamoDB tableDynamoDB = new TableDynamoDB();
                 Map<String, AttributeValue> table = tableDynamoDB
@@ -34,9 +32,6 @@ public class TableIdResource extends BaseResourceModel {
 
                 Table result = ConverterUtil.convertItemToTable(table);
                 System.out.println("RESULT " + result);
-
-//                String response = ConverterUtil.convertResponseToJson(result);
-//          System.out.println("response " + response);
 
                 return new APIGatewayProxyResponseEvent()
                         .withStatusCode(200)

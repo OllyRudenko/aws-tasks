@@ -178,7 +178,7 @@
           "api_key_required":false
         }
       },
-      "/tables/{table_id}":{
+      "/tables/{tableId}":{
         "GET":{
           "integration_request_body_template":{},
           "authorization_type":"authorizer",

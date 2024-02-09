@@ -183,6 +183,18 @@
           "api_key_required": false
         }
       },
+      "/tables/{tableId}": {
+        "GET": {
+          "integration_request_body_template": {},
+          "authorization_type": "authorizer",
+          "integration_type": "lambda",
+          "default_error_pattern": true,
+          "integration_passthrough_behavior": "WHEN_NO_TEMPLATES",
+          "lambda_name": "api_handler",
+          "enable_proxy": true,
+          "api_key_required": false
+        }
+      },
       "/reservations": {
         "POST": {
           "integration_request_body_template": {

@@ -183,8 +183,7 @@
           "integration_request_body_template":{},
           "authorization_type":"authorizer",
           "integration_type":"lambda",
-          "default_error_pattern":true,
-          "integration_passthrough_behavior":"WHEN_NO_TEMPLATES",
+          "enable_proxy": true,
           "lambda_name":"api_handler"
         }
       },

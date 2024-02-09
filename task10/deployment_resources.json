@@ -1,9 +1,9 @@
 {
-  "lambda-basic-execution": {
-    "policy_content": {
-      "Statement": [
+  "lambda-basic-execution":{
+    "policy_content":{
+      "Statement":[
         {
-          "Action": [
+          "Action":[
             "logs:CreateLogGroup",
             "logs:CreateLogStream",
             "logs:PutLogEvents",
@@ -21,16 +21,16 @@
             "cognito-sync:ListRecords",
             "cognito-sync:UpdateRecords"
           ],
-          "Effect": "Allow",
-          "Resource": "*"
+          "Effect":"Allow",
+          "Resource":"*"
         }
       ],
-      "Version": "2012-10-17"
+      "Version":"2012-10-17"
     },
-    "resource_type": "iam_policy"
+    "resource_type":"iam_policy"
   },
-  "api_handler-role": {
-    "predefined_policies": [
+  "api_handler-role":{
+    "predefined_policies":[
       "AmazonCognitoPowerUser",
       "AmazonCognitoDeveloperAuthenticatedIdentities",
       "AmazonCognitoUnAuthedIdentitiesSessionPolicy",
@@ -39,67 +39,65 @@
       "AmazonAPIGatewayInvokeFullAccess",
       "AmazonDynamoDBFullAccess"
     ],
-    "principal_service": "lambda",
-    "custom_policies": [
+    "principal_service":"lambda",
+    "custom_policies":[
       "lambda-basic-execution"
     ],
-    "resource_type": "iam_role",
-    "allowed_accounts": [
+    "resource_type":"iam_role",
+    "allowed_accounts":[
       "${account_id}"
     ]
   },
-  "${tables_table}": {
-    "resource_type": "dynamodb_table",
-    "hash_key_name": "id",
-    "hash_key_type": "N",
-    "read_capacity": 1,
-    "write_capacity": 1,
-    "global_indexes": [],
-    "autoscaling": []
+  "${tables_table}":{
+    "resource_type":"dynamodb_table",
+    "hash_key_name":"id",
+    "hash_key_type":"N",
+    "read_capacity":1,
+    "write_capacity":1,
+    "global_indexes":[],
+    "autoscaling":[]
   },
-  "${reservations_table}": {
-    "resource_type": "dynamodb_table",
-    "hash_key_name": "id",
-    "hash_key_type": "S",
-    "read_capacity": 1,
-    "write_capacity": 1,
-    "global_indexes": [],
-    "autoscaling": []
+  "${reservations_table}":{
+    "resource_type":"dynamodb_table",
+    "hash_key_name":"id",
+    "hash_key_type":"S",
+    "read_capacity":1,
+    "write_capacity":1,
+    "global_indexes":[],
+    "autoscaling":[]
   },
-  "${booking_userpool}": {
-    "resource_type": "cognito_idp",
-    "auth_role": "api_handler-role",
-    "password_policy": {
-      "minimum_length": 8,
-      "require_uppercase": true,
-      "require_symbols": true,
-      "require_lowercase": true,
-      "require_numbers": true
+  "${booking_userpool}":{
+    "resource_type":"cognito_idp",
+    "auth_role":"api_handler-role",
+    "password_policy":{
+      "minimum_length":8,
+      "require_uppercase":true,
+      "require_symbols":true,
+      "require_lowercase":true,
+      "require_numbers":true
     },
-    "auto_verified_attributes": [
+    "auto_verified_attributes":[
       "email"
     ],
-    "sms_configuration": {},
-    "username_attributes": [
+    "sms_configuration":{},
+    "username_attributes":[
       "email"
     ],
-    "custom_attributes": [
+    "custom_attributes":[
       {
-        "name": "firstName",
-        "type": "String"
+        "name":"firstName",
+        "type":"String"
       },
       {
-        "name": "lastName",
-        "type": "String"
+        "name":"lastName",
+        "type":"String"
       }
     ],
-    "client": {
-      "client_name": "client-api",
-      "generate_secret": false,
-      "callback_urls": [
-        "https://example.com"
-      ],
-      "explicit_auth_flows": [
+    "client":{
+      "client_name":"client-api",
+      "generate_secret":false,
+      "callback_urls":["https://example.com"],
+      "explicit_auth_flows":[
         "ALLOW_ADMIN_USER_PASSWORD_AUTH",
         "ALLOW_USER_PASSWORD_AUTH",
         "ALLOW_REFRESH_TOKEN_AUTH",
@@ -107,118 +105,113 @@
       ]
     }
   },
-  "task10_api": {
-    "resource_type": "api_gateway",
-    "deploy_stage": "api",
-    "authorizers": {
-      "authorizer": {
-        "type": "COGNITO_USER_POOLS",
-        "identity_source": "method.request.header.Authorization",
-        "user_pools": [
+  "task10_api":{
+    "resource_type":"api_gateway",
+    "deploy_stage":"api",
+    "authorizers":{
+      "authorizer":{
+        "type":"COGNITO_USER_POOLS",
+        "identity_source":"method.request.header.Authorization",
+        "user_pools":[
           "simple-booking-userpool"
         ],
-        "ttl": 300
+        "ttl":300
       }
     },
-    "dependencies": [
+    "dependencies":[
       {
-        "resource_name": "api_handler",
-        "resource_type": "lambda"
+        "resource_name":"api_handler",
+        "resource_type":"lambda"
       }
     ],
-    "resources": {
-      "/signup": {
-        "POST": {
-          "integration_request_body_template": {
-            "application/json": ".."
+    "resources":{
+      "/signup":{
+        "POST":{
+          "integration_request_body_template":{
+            "application/json":".."
           },
-          "authorization_type": "NONE",
-          "integration_type": "lambda",
-          "method_request_parameters": {},
-          "default_error_pattern": true,
-          "integration_passthrough_behavior": "WHEN_NO_TEMPLATES",
-          "lambda_name": "api_handler",
-          "enable_proxy": true
+          "authorization_type":"NONE",
+          "integration_type":"lambda",
+          "method_request_parameters":{},
+          "default_error_pattern":true,
+          "integration_passthrough_behavior":"WHEN_NO_TEMPLATES",
+          "lambda_name":"api_handler",
+          "enable_proxy":true
         }
       },
-      "/signin": {
-        "POST": {
-          "integration_request_body_template": {
-            "application/json": ".."
+      "/signin":{
+        "POST":{
+          "integration_request_body_template":{
+            "application/json":".."
           },
-          "authorization_type": "NONE",
-          "integration_type": "lambda",
-          "method_request_parameters": {},
-          "default_error_pattern": true,
-          "integration_passthrough_behavior": "WHEN_NO_TEMPLATES",
-          "lambda_name": "api_handler",
-          "enable_proxy": true
+          "authorization_type":"NONE",
+          "integration_type":"lambda",
+          "method_request_parameters":{},
+          "default_error_pattern":true,
+          "integration_passthrough_behavior":"WHEN_NO_TEMPLATES",
+          "lambda_name":"api_handler",
+          "enable_proxy":true
         }
       },
-      "/tables": {
-        "POST": {
-          "integration_request_body_template": {
-            "application/json": ".."
+      "/tables":{
+        "POST":{
+          "integration_request_body_template":{
+            "application/json":".."
           },
-          "authorization_type": "authorizer",
-          "integration_type": "lambda",
-          "method_request_parameters": {},
-          "default_error_pattern": true,
-          "integration_passthrough_behavior": "WHEN_NO_TEMPLATES",
-          "lambda_name": "api_handler",
-          "enable_proxy": true,
-          "api_key_required": false
+          "authorization_type":"authorizer",
+          "integration_type":"lambda",
+          "method_request_parameters":{},
+          "default_error_pattern":true,
+          "integration_passthrough_behavior":"WHEN_NO_TEMPLATES",
+          "lambda_name":"api_handler",
+          "enable_proxy":true,
+          "api_key_required":false
         },
-        "GET": {
-          "integration_request_body_template": {},
-          "authorization_type": "authorizer",
-          "integration_type": "lambda",
-          "method_request_parameters": {
-            "method.request.path.tableId": false
-          },
-          "default_error_pattern": true,
-          "integration_passthrough_behavior": "WHEN_NO_TEMPLATES",
-          "lambda_name": "api_handler",
-          "enable_proxy": true,
-          "api_key_required": false
+        "GET":{
+          "integration_request_body_template":{},
+          "authorization_type":"authorizer",
+          "integration_type":"lambda",
+          "default_error_pattern":true,
+          "integration_passthrough_behavior":"WHEN_NO_TEMPLATES",
+          "lambda_name":"api_handler",
+          "enable_proxy":true,
+          "api_key_required":false
         }
       },
-      "/tables/${tableId}": {
-        "GET": {
-          "integration_request_body_template": {},
-          "authorization_type": "authorizer",
-          "integration_type": "lambda",
-          "default_error_pattern": true,
-          "integration_passthrough_behavior": "WHEN_NO_TEMPLATES",
-          "lambda_name": "api_handler",
-          "enable_proxy": true,
-          "api_key_required": false
+      "/tables/{tableId}":{
+        "GET":{
+          "integration_request_body_template":{},
+          "authorization_type":"authorizer",
+          "integration_type":"lambda",
+          "default_error_pattern":true,
+          "integration_passthrough_behavior":"WHEN_NO_TEMPLATES",
+          "lambda_name":"api_handler"
         }
       },
-      "/reservations": {
-        "POST": {
-          "integration_request_body_template": {
-            "application/json": ".."
+      "/reservations":{
+        "POST":{
+          "integration_request_body_template":{
+            "application/json":".."
           },
-          "authorization_type": "authorizer",
-          "integration_type": "lambda",
-          "method_request_parameters": {},
-          "default_error_pattern": true,
-          "integration_passthrough_behavior": "WHEN_NO_TEMPLATES",
-          "lambda_name": "api_handler",
-          "enable_proxy": true,
-          "api_key_required": false
+          "authorization_type":"authorizer",
+          "integration_type":"lambda",
+          "method_request_parameters":{},
+          "default_error_pattern":true,
+          "integration_passthrough_behavior":"WHEN_NO_TEMPLATES",
+          "lambda_name":"api_handler",
+          "enable_proxy":true,
+          "api_key_required":false
         },
-        "GET": {
-          "integration_request_body_template": {},
-          "authorization_type": "authorizer",
-          "integration_type": "lambda",
-          "method_request_parameters": {},
-          "default_error_pattern": true,
-          "integration_passthrough_behavior": "WHEN_NO_TEMPLATES",
-          "lambda_name": "api_handler",
-          "enable_proxy": true,
-          "api_key_required": false
+        "GET":{
+          "integration_request_body_template":{},
+          "authorization_type":"authorizer",
+          "integration_type":"lambda",
+          "method_request_parameters":{},
+          "default_error_pattern":true,
+          "integration_passthrough_behavior":"WHEN_NO_TEMPLATES",
+          "lambda_name":"api_handler",
+          "enable_proxy":true,
+          "api_key_required":false
         }
       }
     }

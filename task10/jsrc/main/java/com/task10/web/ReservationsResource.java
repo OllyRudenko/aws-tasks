@@ -21,9 +21,9 @@ import java.util.Map;
 public class ReservationsResource extends BaseResourceModel {
     @Override
     public APIGatewayProxyResponseEvent execute(Map apiRequest, Map<String, String> sysEnv) {
-        LinkedHashMap<String, String> headers = (LinkedHashMap<String, String>) apiRequest.get("headers");
         String httpMethod = (String) apiRequest.get("httpMethod");
 
+//        LinkedHashMap<String, String> headers = (LinkedHashMap<String, String>) apiRequest.get("headers");
 //        String token = headers.get("Authorization");
 //        String region = sysEnv.get("region");
 //        String userPoolName = sysEnv.get("booking_userpool");
@@ -58,8 +58,6 @@ public class ReservationsResource extends BaseResourceModel {
             Map<String, List<Reservation>> result = ConverterUtil.convertReservationItems(reservations);
             System.out.println("RESULT " + result);
 
-//            String response = ConverterUtil.convertResponseWithListToJson(result);
-//            System.out.println("RESPONSE all reservations" + response);
 
             return new APIGatewayProxyResponseEvent()
                     .withStatusCode(200)
@@ -70,6 +68,7 @@ public class ReservationsResource extends BaseResourceModel {
                 .withStatusCode(400);
     }
 
+    @Deprecated
     public static String convertToJson(Object object) {
         try {
             return new ObjectMapper().writeValueAsString(object);
@@ -78,6 +77,7 @@ public class ReservationsResource extends BaseResourceModel {
         }
     }
 
+    @Deprecated
     public JSONObject convert(Map<String, List> result) {
         JSONObject jsonResult = new JSONObject();
         JSONArray jsonArray = new JSONArray();
@@ -118,6 +118,6 @@ public class ReservationsResource extends BaseResourceModel {
 
         return new APIGatewayProxyResponseEvent()
                 .withStatusCode(200)
-                .withBody(new Gson().toJson(response)); // ConverterUtil.convertResponseToJson(response)
+                .withBody(new Gson().toJson(response));
     }
 }

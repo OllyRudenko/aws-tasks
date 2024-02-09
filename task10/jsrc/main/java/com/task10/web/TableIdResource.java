@@ -36,21 +36,4 @@ public class TableIdResource extends BaseResourceModel {
         return new APIGatewayProxyResponseEvent()
                 .withStatusCode(500);
     }
-
-    @Deprecated
-    public JSONObject convert(Map<String, List> result) {
-        JSONObject jsonResult = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
-        List<Map<String, Object>> tables = result.get("tables");
-
-        for (Map<String, Object> table : tables) {
-            JSONObject jsonTable = new JSONObject(table);
-            jsonArray.add(jsonTable);
-        }
-
-        jsonResult.put("tables", jsonArray);
-
-        System.out.println(jsonResult.toString());
-        return jsonResult;
-    }
 }

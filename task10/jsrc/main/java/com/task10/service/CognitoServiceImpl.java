@@ -4,11 +4,9 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.RSAKeyProvider;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.task10.utils.CognitoUtil;
 import com.task10.utils.RSAKeyProviderTokenUtils;
-import com.google.gson.Gson;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.*;
 
@@ -74,7 +72,6 @@ public class CognitoServiceImpl implements CognitoService {
         } catch (CognitoIdentityProviderException e) {
             System.err.println(e.awsErrorDetails().errorMessage());
             throw new RuntimeException(e.getMessage());
-//            System.exit(1);
         }
     }
 

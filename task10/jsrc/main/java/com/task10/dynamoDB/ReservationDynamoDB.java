@@ -21,7 +21,7 @@ public class ReservationDynamoDB {
         AmazonDynamoDB clientDynamoDB = AmazonDynamoDBClientBuilder.standard()
                 .withRegion(region).build();
 
-        System.out.println("Hello from ReservationDynamoDB SAVE!!!! ");
+        System.out.println("Hello from ReservationDynamoDB SAVE !!! ");
 
         if (isExistTable(region, tablesTableName, tableNumber)
                 &&
@@ -57,11 +57,9 @@ public class ReservationDynamoDB {
     }
 
     public boolean checkAndSave(String region, String tableName, Integer tableNumber, String date, String slotTimeStart, String slotTimeEnd) {
-        // Створення клієнта DynamoDB
         AmazonDynamoDB clientDynamoDB = AmazonDynamoDBClientBuilder.standard()
                 .withRegion(region).build();
 
-        // Створення мапи для визначення умови фільтрації
         Map<String, String> expressionAttributeNames = new HashMap<>();
         expressionAttributeNames.put("#date", "date");
 
@@ -71,7 +69,6 @@ public class ReservationDynamoDB {
         expressionAttributeValues.put(":startTime", new AttributeValue().withS(slotTimeStart));
         expressionAttributeValues.put(":endTime", new AttributeValue().withS(slotTimeEnd));
 
-        // Підготовка параметрів запиту сканування
         ScanRequest scanRequest = new ScanRequest()
                 .withTableName(tableName)
                 .withFilterExpression("tableNumber = :tableNumber AND #date = :date " +
@@ -94,14 +91,14 @@ public class ReservationDynamoDB {
         AmazonDynamoDB clientDynamoDB = AmazonDynamoDBClientBuilder.standard()
                 .withRegion(region).build();
 
-        // Створення мапи для визначення умови фільтрації
+        // Create filtering and change name for system reserved param 'number'
         Map<String, String> expressionAttributeNames = new HashMap<>();
         expressionAttributeNames.put("#number", "number");
 
         Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
         expressionAttributeValues.put(":number", new AttributeValue().withN(String.valueOf(tableNumber)));
 
-        // Підготовка параметрів запиту сканування
+        // prepare to scan
         String filterExpression = "#number = :number";
 
         ScanRequest scanRequest = new ScanRequest()
@@ -136,10 +133,11 @@ public class ReservationDynamoDB {
 
         ScanRequest scanRequest = new ScanRequest().withTableName(tableName);
         System.out.println("SCAN " + scanRequest.toString());
+
         List<Map<String, AttributeValue>> itemList = new ArrayList<>();
 
         try {
-            // Виконую сканування таблиці та отримую відповідь
+            // scan table
             ScanResult response = clientDynamoDB.scan(scanRequest);
             System.out.println("ALL Items reservations " + response.getItems().toString());
 

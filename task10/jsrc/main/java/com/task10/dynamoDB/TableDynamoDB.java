@@ -41,6 +41,7 @@ public class TableDynamoDB {
             System.out.println("Start try clientDynamoDB.putItem(request)");
             PutItemResult response = clientDynamoDB.putItem(request);
             System.out.println(tableName + " was successfully saved.");
+
             return true;
         } catch (ResourceNotFoundException e) {
             System.err.format("Error: The Amazon DynamoDB table \"%s\" can't be found.\n", tableName);
@@ -66,7 +67,7 @@ public class TableDynamoDB {
         System.out.println("scanRequest " + scanRequest);
 
         try {
-            // Виконуємо сканування таблиці та отримуємо відповідь
+            // scan table and take result
             ScanResult response = clientDynamoDB.scan(scanRequest);
 
             itemList.addAll(response.getItems());

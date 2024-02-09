@@ -23,24 +23,7 @@ public class TablesResource extends BaseResourceModel {
     @Override
     public APIGatewayProxyResponseEvent execute(Map apiRequest, Map<String, String> sysEnv) {
 
-        LinkedHashMap<String, String> headers = (LinkedHashMap<String, String>) apiRequest.get("headers");
-        LinkedHashMap<String, String> pathParam = (LinkedHashMap<String, String>) apiRequest.get("queryStringParameters");
-
         String httpMethod = (String) apiRequest.get("httpMethod");
-
-//        String token = headers.get("Authorization");
-//        String region = sysEnv.get("region");
-//        String userPoolName = sysEnv.get("booking_userpool");
-//        CognitoService cognitoService = new CognitoServiceImpl(region, userPoolName);
-//        if (cognitoService.isValidIdToken(token)) {
-////        if (cognitoService.isTokenValid(token)) {
-//            System.out.println("HELLO - token is valid");
-//        } else {
-//            System.out.println("HELLO - token is NOT valid");
-//            return new APIGatewayProxyResponseEvent()
-//                    .withStatusCode(401)
-//                    .withBody("HELLO - token is NOT valid");
-//        }
 
         System.out.println("METHOD " + httpMethod);
         if (httpMethod.equals("POST")) {
@@ -67,22 +50,6 @@ public class TablesResource extends BaseResourceModel {
                 .withStatusCode(500);
     }
 
-    public JSONObject convert(Map<String, List> result) {
-        JSONObject jsonResult = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
-        List<Map<String, Object>> tables = result.get("tables");
-
-        for (Map<String, Object> table : tables) {
-            JSONObject jsonTable = new JSONObject(table);
-            jsonArray.add(jsonTable);
-        }
-
-        jsonResult.put("tables", jsonArray);
-
-        System.out.println(jsonResult.toString());
-        return jsonResult;
-    }
-
     private APIGatewayProxyResponseEvent saveReceivedTableToDynamoDB(Map<String, String> sysEnv, LinkedHashMap<String, Object> parsedBody) {
         Integer id = (int) Double.parseDouble(String.valueOf(parsedBody.get("id")));
         Integer number = (int) Double.parseDouble(String.valueOf(parsedBody.get("number")));
@@ -104,6 +71,6 @@ public class TablesResource extends BaseResourceModel {
 
         return new APIGatewayProxyResponseEvent()
                 .withStatusCode(200)
-                .withBody(ConverterUtil.convertResponseToJson(response)); //
+                .withBody(ConverterUtil.convertResponseToJson(response));
     }
 }

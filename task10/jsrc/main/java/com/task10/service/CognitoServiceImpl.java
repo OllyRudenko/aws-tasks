@@ -96,6 +96,7 @@ public class CognitoServiceImpl implements CognitoService {
         return authResponse.authenticationResult().idToken();
     }
 
+    @Deprecated
     @Override
     public boolean isValidIdToken(String accessToken) {
         AdminGetUserResponse getUserResponse = identityProviderClient.adminGetUser(
@@ -121,8 +122,6 @@ public class CognitoServiceImpl implements CognitoService {
                 //.withAudience("2qm9sgg2kh21masuas88vjc9se") // Validate apps audience if needed
                 .build();
 
-//        System.out.println(jwtVerifier.verify(token).getPayload());
-
         String string = new String(Base64.getUrlDecoder().decode(jwtVerifier.verify(convertedToken).getPayload()));
         Gson gson = new Gson();
         LinkedHashMap<String, Object> payloadMap = gson.fromJson(string, LinkedHashMap.class);
@@ -134,25 +133,14 @@ public class CognitoServiceImpl implements CognitoService {
         //AWSCognitoIdentityProvider cognitoClient = AWSCognitoIdentityProviderClientBuilder.defaultClient();
 
         try {
-            // Отримати інформацію про користувача за допомогою токену доступу
             GetUserRequest getUserRequest = GetUserRequest.builder().accessToken(accessToken).build();
             GetUserResponse getUserResult = identityProviderClient.getUser(getUserRequest);
             System.out.println("USER RESULT " + getUserResult.toString());
-            // Перевірити, чи успішно отримано інформацію про користувача
+
             return getUserResult != null;
         } catch (Exception e) {
-            // Обробити помилку, якщо отримання інформації про користувача не вдалося
             e.printStackTrace();
             return false;
-        }
-    }
-
-    private String convertToJson(String token) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.writeValueAsString(token);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
         }
     }
 

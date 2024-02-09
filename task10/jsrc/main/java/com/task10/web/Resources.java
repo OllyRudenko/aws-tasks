@@ -10,6 +10,7 @@ public class Resources {
     public final static String SING_IN = "/signin";
     public final static String TABLES = "/tables";
     public final static String RESERVATIONS = "/reservations";
+    public final static String TABLES_TABLE_ID = "/tables/{tableId}";
 
     public APIGatewayProxyResponseEvent findResourceAndExecute(String resource, LinkedHashMap apiRequest, Map<String, String> sysEnv) {
         System.out.println("Hello from APIGatewayProxyResponseEvent");
@@ -24,7 +25,7 @@ public class Resources {
         }else if(resource.equalsIgnoreCase(TABLES)){
             System.out.println("Hello from resource.equalsIgnoreCase(TABLES) " + resource);
             return new TablesResource().execute(apiRequest, sysEnv);
-        }else if (resource.startsWith(TABLES) && resource.length() > TABLES.length() ) {
+        }else if (resource.startsWith(TABLES_TABLE_ID)) {
             System.out.println("Hello from resource.equalsIgnoreCase(TABLES/TABLE_ID) " + resource);
             return new TableIdResource().execute(apiRequest, sysEnv);
         }else if (resource.equalsIgnoreCase(RESERVATIONS)){

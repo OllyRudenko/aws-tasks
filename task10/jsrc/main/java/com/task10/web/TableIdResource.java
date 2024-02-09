@@ -2,8 +2,6 @@ package com.task10.web;
 
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.task10.dynamoDB.TableDynamoDB;
 import com.task10.models.Table;
@@ -11,11 +9,8 @@ import com.task10.utils.ConverterUtil;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class TableIdResource extends BaseResourceModel {
     @Override
@@ -24,32 +19,25 @@ public class TableIdResource extends BaseResourceModel {
 
         System.out.println("METHOD " + httpMethod);
         if (httpMethod.equals("GET")) {
-            String tableId = apiRequest.get("resource").toString().substring("/api/tables/".length());
+            String tableId = apiRequest.get("path").toString().substring("/tables/".length());
 
-                TableDynamoDB tableDynamoDB = new TableDynamoDB();
-                Map<String, AttributeValue> table = tableDynamoDB
-                        .get(sysEnv.get("region"), sysEnv.get("tables_table"), tableId);
+            TableDynamoDB tableDynamoDB = new TableDynamoDB();
+            Map<String, AttributeValue> table = tableDynamoDB
+                    .get(sysEnv.get("region"), sysEnv.get("tables_table"), tableId);
 
-                Table result = ConverterUtil.convertItemToTable(table);
-                System.out.println("RESULT " + result);
+            Table result = ConverterUtil.convertItemToTable(table);
+            System.out.println("RESULT " + result);
 
-                return new APIGatewayProxyResponseEvent()
-                        .withStatusCode(200)
-                        .withBody(new Gson().toJson(result));
-            }
+            return new APIGatewayProxyResponseEvent()
+                    .withStatusCode(200)
+                    .withBody(new Gson().toJson(result));
+        }
 
         return new APIGatewayProxyResponseEvent()
                 .withStatusCode(500);
     }
 
-    public static String convertToJson(Object object) {
-        try {
-            return new ObjectMapper().writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
+    @Deprecated
     public JSONObject convert(Map<String, List> result) {
         JSONObject jsonResult = new JSONObject();
         JSONArray jsonArray = new JSONArray();
@@ -64,29 +52,5 @@ public class TableIdResource extends BaseResourceModel {
 
         System.out.println(jsonResult.toString());
         return jsonResult;
-    }
-
-    private APIGatewayProxyResponseEvent saveReceivedTableToDynamoDB(Map<String, String> sysEnv, LinkedHashMap<String, Object> parsedBody) {
-        Integer id = (int) Double.parseDouble(String.valueOf(parsedBody.get("id")));
-        Integer number = (int) Double.parseDouble(String.valueOf(parsedBody.get("number")));
-        Integer places = (int) Double.parseDouble(String.valueOf(parsedBody.get("places")));
-        Boolean isVip = Boolean.valueOf(parsedBody.get("isVip").toString());
-        Integer minOrder = (int) Double.parseDouble(String.valueOf(parsedBody.get("minOrder")));
-
-        TableDynamoDB tableDynamoDB = new TableDynamoDB();
-        boolean result = tableDynamoDB
-                .save(sysEnv.get("region"), sysEnv.get("tables_table"), id, number, places, isVip, minOrder);
-        Map<String, Object> response = new HashMap<>();
-        response.put("id", id);
-
-        if (!result) {
-            return new APIGatewayProxyResponseEvent()
-                    .withStatusCode(400)
-                    .withBody("Object was not saved");
-        }
-
-        return new APIGatewayProxyResponseEvent()
-                .withStatusCode(200)
-                .withBody(ConverterUtil.convertResponseToJson(response)); //
     }
 }
